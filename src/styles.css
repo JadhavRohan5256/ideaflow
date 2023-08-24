@@ -1,1 +1,68 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;1,200;1,300;1,400&family=Rubik:ital,wght@0,300;0,400;1,300&display=swap');
+
+:root {
+    /* google font */
+    --rubic: 'Rubik', sans-serif;
+    --poppins: 'Poppins', sans-serif;
+}
+
+:root {
+    /* common color  */
+    --primary-color: #03DAC5;
+    --primary-variant-color: #018786;
+}
+
+:root {
+    /* Dark Mode  */
+    --bg-color: #212121;
+    --bg-surface-color: #ffffff1a; 
+    --text-color: #ECEFF1;
+}
+
+*,
+*::after,
+*::before {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--rubic);
+    background-color: var(--bg-color);
+}
+
+body::-webkit-scrollbar {
+    width: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 5px;
+}
+
+body::-webkit-scrollbar-track {
+    box-shadow: 0px 0px 1px var(--text-color);
+    border-radius: 5px;
+    background-color: var(--bg-surface-color);
+    overflow: hidden;
+}
+
+.container {
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.icons {
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+
+@media only screen and (max-width: 1000px) {
+    .container {
+        width: 90%;
+    }
+}

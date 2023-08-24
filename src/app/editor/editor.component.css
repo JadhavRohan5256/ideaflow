@@ -1,0 +1,133 @@
+.content-wrapper {
+    position: relative;
+}
+
+.idea-wrapper {
+    padding: 1rem 0;
+}
+
+.content-date {
+    text-align: center;
+    position: sticky;
+    top: 0;
+    right:0;
+}
+
+.ideas {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.editor-wrapper .time {
+    text-align: right;
+    margin: 1rem 0;
+    font-weight: 300;
+    font-style: italic;
+}
+
+.editor-wrapper .textarea {
+    background-color: transparent;
+    outline: none;
+    resize: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    box-shadow: 0 1.5px 1px -1px gray;
+    width: 100%;
+    height: 150px;
+    margin-top: 1rem;
+    padding-bottom: 1rem;
+    font-family: var(--poppin);
+    font-weight: 200;
+    z-index: 3;
+    
+}
+
+.editor-wrapper .textarea::-webkit-scrollbar {
+    width: 7px;
+}
+
+.editor-wrapper .textarea::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 5px;
+}
+
+.editor-wrapper .textarea::-webkit-scrollbar-track {
+    box-shadow: 0px 0px 1px var(--text-color);
+    background-color: var(--bg-surface-color);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.previous-ideas-wrapper {
+    position: absolute;
+    top: 105%;
+    right: 0;
+    background-color: var(--bg-color);
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 350;
+}
+
+.previous-ideas-wrapper span {
+    font-weight: 400;
+    box-shadow: 0 1.5px 1px -1px gray; 
+    padding: 0.5rem 1rem;
+    background-color: var(--bg-surface-color);
+    display: block;
+}
+
+.previous-ideas {
+    max-height: 200px;
+    overflow-y: scroll;
+    background-color: var(--bg-surface-color);
+    padding-bottom: 1rem;
+}
+
+.previous-ideas::-webkit-scrollbar {
+    width: 7px;
+}
+
+.previous-ideas::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 7px;
+}
+
+.previous-ideas::-webkit-scrollbar-track {
+    background-color: var(--bg-surface-color);
+    border-radius: 7px;
+}
+
+.previous-ideas div {
+    padding: 0.5rem 1rem;
+    font-size: 16px;
+    font-weight: 300;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.previous-ideas div:hover {
+    background-color: var(--text-color);
+}
+
+.previous-ideas div p span, .arrow-right{
+    display: inline-block;
+    color: var(--primary-variant-color);
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+}
+
+.arrow-right {
+    margin: 0 0.2rem;
+    display: inline-block;
+}
