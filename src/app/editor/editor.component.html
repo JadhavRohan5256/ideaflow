@@ -1,18 +1,22 @@
 <div class="container content-wrapper">
-    <div class="idea-wrapper">
+    <div class="idea-wrapper" id="two">
         <p class="content-date">Today</p>
         <div class="ideas" [formGroup]="CurrentIdeas">
             <div class="editor-wrapper" *ngFor="let control of CurrentIdeas.controls | keyvalue">
                 <small class="time"></small>
-                <textarea [id]="control.key" [formControlName]="control.key" (input)="changeDetection($event, control.key)" class="textarea">
+                <textarea [formControlName]="control.key" (input)="changeDetection($event, control.key)"
+                    class="textarea">
                 </textarea>
-                <div class="previous-ideas-wrapper" *ngIf="ideaMenuOpen.flag && control.key === ideaMenuOpen.control">
+                <!-- all ideas dialog box -->
+                <div class="previous-ideas-wrapper"
+                    *ngIf="ideaMenuOpen.flag && control.key === ideaMenuOpen.control" [ngStyle]="boxPosition">
                     <span>Select Ideas</span>
                     <div class="previous-ideas" *ngFor="let idea of allIdeas;let i = index;">
-                        <div (click)="addAnotherIdea(control.key, i)">
+                        <div (click)="addAnotherIdeaAsRef(control.key, i)">
                             <p *ngFor="let ref of idea; let j = index;">
                                 <span>{{ref}}</span>
-                                <fa-icon *ngIf="j < idea.length - 1" class="arrow-right" [icon]="faArrowRightLong"></fa-icon>
+                                <fa-icon *ngIf="j < idea.length - 1" class="arrow-right"
+                                    [icon]="faArrowRightLong"></fa-icon>
                             </p>
                         </div>
                     </div>
