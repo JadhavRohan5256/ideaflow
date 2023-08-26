@@ -32,23 +32,9 @@
 body {
     font-family: var(--rubic);
     background-color: var(--bg-color);
-}
-
-body::-webkit-scrollbar {
-    width: 10px;
-}
-
-body::-webkit-scrollbar-thumb {
-    background-color: var(--primary-color);
-    border-radius: 5px;
-}
-
-body::-webkit-scrollbar-track {
-    box-shadow: 0px 0px 1px var(--text-color);
-    border-radius: 5px;
-    background-color: var(--bg-surface-color);
     overflow: hidden;
 }
+
 
 .container {
     width: 1000px;

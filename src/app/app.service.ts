@@ -6,10 +6,26 @@ import { Subject } from "rxjs";
 })
 export class AppService {
     newIdea = new Subject();
-
+    allIdeas!: string[]
     addNewIdea(value: boolean) {
         if(value) {
             this.newIdea.next(value)
         }
+    }
+
+    saveIdeas(ideas: string[]) {
+        localStorage.setItem('allIdeas', JSON.stringify(ideas))
+    }
+    
+    getIdeas(): string[] {
+        let storage = localStorage.getItem('allIdeas')
+        if(storage) {
+            let parseStorage = JSON.parse(storage);
+            if(parseStorage) {
+                return parseStorage;
+            }
+        }
+
+        return [];
     }
 }

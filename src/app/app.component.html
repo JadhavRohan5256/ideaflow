@@ -7,12 +7,11 @@
     <div class="nav-middle">
       <div class="search-wrapper">
         <fa-icon class="icons" [icon]="faMagnifyingGlass"></fa-icon>
-        <input type="text" name="search" id="search" class="search" placeholder="Search Notes">
+        <input type="text" name="search" id="search" class="search" placeholder="Search Notes" autocomplete="off">
       </div>
     </div>
     <div class="nav-right">
       <fa-icon class="icons" [icon]="faPenToSquare" (click)="onClickAdd()"></fa-icon>
-      <fa-icon class="icons" [icon]="faMicrophone"></fa-icon>
     </div>
   </div>
 </div>

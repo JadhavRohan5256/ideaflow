@@ -1,5 +1,5 @@
-import { Component, ElementRef, OnInit, Renderer2 } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
+import { Component, ElementRef, OnDestroy, OnInit, Renderer2 } from "@angular/core";
+import { FormArray, FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { AppService } from "../app.service";
 import { faArrowRightLong } from '@fortawesome/free-solid-svg-icons'
 
@@ -8,90 +8,140 @@ import { faArrowRightLong } from '@fortawesome/free-solid-svg-icons'
     templateUrl: './editor.component.html',
     styleUrls: ['./editor.component.css']
 })
-export class EditorComponent implements OnInit {
+export class EditorComponent implements OnInit, OnDestroy {
     faArrowRightLong = faArrowRightLong;
     boxPosition: { 'left': string, 'top': string } = {
         left: '0px',
         top: '0px'
     }
-    CurrentIdeas = new FormGroup({})
-    ideaMenuOpen: { 'flag': boolean, 'control': string } = {
+    CurrentIdeas!: FormGroup;
+    ideaMenuOpen: { 'flag': boolean, 'control'?: number, 'length': number } = {
         'flag': false,
-        'control': ''
+        'length': 0
     }
-    allIdeas = [['idea2', 'idea1', 'idea0'], ['idea5', 'idea4', 'idea3', 'idea2']]
+
+    allIdeas: string[] = []
 
     constructor(
         private appService: AppService,
         private formBuilder: FormBuilder
-    ) {}
+    ) {
+
+    }
 
     ngOnInit(): void {
-        this.CurrentIdeas = this.formBuilder.group({});
+        this.allIdeas = this.appService.getIdeas();
+        let modifed = this.allIdeas.map((idea) => {
+            let htmlCode = '';
+            let splittedArr = idea.split('<>')
+            if (splittedArr.length > 0) {
+                splittedArr.forEach((item, i) => {
+                    if (item !== '' && i > 0) htmlCode += `<span style="color: #018786; font-weight: 500;"><>${item}</span>`
+                })
+            }
+
+            return splittedArr[0] + htmlCode;
+        })
+
+        this.CurrentIdeas = this.formBuilder.group({
+            'items': this.formBuilder.array(this.allIdeas)
+        });
+
+        setTimeout(() => {
+            modifed = modifed.reverse();
+            if (modifed.length > 0) {
+                modifed.forEach((item, i) => {
+                    let eleRef = document.getElementById(`editable_${i}`) as HTMLDivElement;
+                    if (eleRef) {
+                        eleRef.innerHTML = item;
+                    }
+                })
+            }
+        }, 200);
 
         this.appService.newIdea.subscribe((value) => {
             if (value) {
-                console.log(value)
-                const ideaName = `idea_${Object.keys(this.CurrentIdeas.controls).length}`;
-                this.CurrentIdeas.addControl(ideaName, new FormControl(''))
-                console.log(this.CurrentIdeas.value)
+                this.items.push(new FormControl(''))
             }
         })
     }
 
-    changeDetection(event: any, controlName: string) {
-        let controlValue = this.CurrentIdeas.get(controlName)?.value;
-        if (controlValue.endsWith('<>')) {
+    get items() {
+        return this.CurrentIdeas.get('items') as FormArray
+    }
+
+    getAllIdeas() {
+        const modif = this.allIdeas.filter((val) => val !== '');
+        return modif
+    }
+
+    changeDetection(event: any, idx: number) {
+        let contentValue = (event.target as HTMLDivElement).textContent;
+        contentValue = this.replacedValue(contentValue);
+        if (contentValue === '') return;
+        this.updateDivValue(contentValue, idx);
+        if (contentValue.endsWith('<>')) {
             this.ideaMenuOpen = {
                 flag: true,
-                control: controlName
+                control: idx,
+                length: this.allIdeas.length
             }
         }
         else {
             this.ideaMenuOpen = {
                 flag: false,
-                control: ''
+                length: this.allIdeas.length
             }
         }
-        this.boxPosition = this.getCursorPos(event, controlName);
+        this.boxPosition = this.getCursorPos(event, idx);
 
     }
 
-
-    addAnotherIdeaAsRef(controlName: string, index: number) {
-        let controlValue = this.CurrentIdeas.get(controlName)?.value;
-        let modifiedValue = '';
-        if (controlValue.endsWith('<>')) {
-            modifiedValue = controlValue.slice(0, -2);
-            modifiedValue += `<span class="hightlight"><> ${this.convertAllIdeas(this.allIdeas[index])}</span>`
-            console.log(modifiedValue)
-        }
-
-        console.log(modifiedValue)
-        this.CurrentIdeas.patchValue({
-            controlName: modifiedValue
-        })
-        console.log(this.CurrentIdeas.value)
+    updateDivValue(newValue: string, index: number) {
+        this.items.controls[index].setValue(newValue)
     }
 
-    private convertAllIdeas(value: string[]): string {
-        let str = `<span class="highlight"><></span>`
-        value.forEach((val, i) => {
-            str += `
-            <span class="highlight">${val}</span>
-            `
-            if (i < value.length) {
-                str += `<fa-icon class="arrow-right" [icon]="faArrowRightLong"></fa-icon>`
+    addAnotherIdeaAsRef(idx: number, index: number) {
+        let controlValue = this.items.at(idx).value;
+        if (controlValue && controlValue !== this.allIdeas[index]) {
+            let modifiedValue = `<span style="color: #018786; font-weight: 500;">${this.allIdeas[index]}`;
+            let contentEditableDiv = document.getElementById(`editable_${idx}`) as HTMLDivElement;
+            contentEditableDiv.innerHTML += modifiedValue;
+            let innerText = this.replacedValue(contentEditableDiv.textContent);
+            if (innerText && !this.allIdeas.includes(innerText)) {
+                if (this.allIdeas.includes(controlValue)) {
+                    this.allIdeas[this.allIdeas.indexOf(controlValue)] = innerText;
+                }
+                else {
+                    this.allIdeas.push(innerText)
+                }
             }
-        })
-
-        return str;
+        }
+        this.ideaMenuOpen = {
+            flag: false,
+            control: idx,
+            length: this.allIdeas.length
+        }
+        this.ngOnDestroy()
     }
 
-    private getCursorPos(event: any, controlName: string): { 'left': string, 'top': string } {
-        const eventRef = event.target as HTMLTextAreaElement;
+    private replacedValue(rawValue: string | null): string {
+        if (!rawValue) return '';
+        let replacedValue = rawValue.replaceAll(' ', '')
+        replacedValue = replacedValue.replaceAll(/\n/g, '');
+        return replacedValue;
+    }
+
+    private getCursorPos(event: Event, idx: number): { 'left': string, 'top': string } {
+        const eventRef = event.target as HTMLInputElement;
         let selectionStart = eventRef.selectionStart;
-        const textBeforeCaret = eventRef.value.substring(0, selectionStart);
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            selectionStart = range.startOffset;
+        }
+        if (!selectionStart) return { left: '0px', top: '50px' };
+        const textBeforeCaret = this.items.controls[idx].value.substring(0, selectionStart);
         const span = document.createElement('span');
         span.style.visibility = 'hidden';
         span.style.position = 'absolute';
@@ -101,13 +151,42 @@ export class EditorComponent implements OnInit {
         document.body.appendChild(span);
         const caretPositionX = span.offsetWidth;
         const caretPositionY = span.offsetHeight;
-        console.log('offsetx ', span.offsetTop)
         document.body.removeChild(span);
-        console.log(`Caret Position X: ${caretPositionX}px / ${caretPositionY}px.`);
 
         return {
             'left': `${caretPositionX}px`,
             'top': `${caretPositionY + 50}px`
         }
+    }
+
+    addIdea(idx: number) {
+        let idea = this.items.at(idx).value
+        if (!this.allIdeas.includes(idea)) {
+            this.allIdeas.push(idea)
+        }
+        this.ngOnDestroy()
+    }
+
+    deleteIdeas(event: KeyboardEvent, idx: number) {
+        if (event.key === 'Delete') {
+            let contentEditableDiv = document.getElementById(`editable_${idx}`) as HTMLDivElement;
+            let controlValue = this.items.controls[idx].value;
+            console.log('control value ', controlValue)
+            console.log('span value', contentEditableDiv.querySelector('span:last-of-type')?.textContent)
+            contentEditableDiv.querySelector('span:last-of-type')?.remove()
+        }
+        this.ngOnDestroy()
+    }
+
+    clickedOutside(): void {
+        this.ideaMenuOpen = {
+            flag: false,
+            length: this.allIdeas.length
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.allIdeas = this.getAllIdeas()
+        this.appService.saveIdeas(this.allIdeas)
     }
 }

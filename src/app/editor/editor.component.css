@@ -48,6 +48,7 @@
     font-family: var(--poppin);
     font-weight: 200;
     z-index: 3;
+    overflow-y: auto;
     
 }
 
@@ -67,13 +68,25 @@
     overflow: hidden;
 }
 
+.cover {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 200;
+    margin-top: -71.2px;
+}
+
 .previous-ideas-wrapper {
     position: absolute;
     background-color: var(--bg-color);
     border-radius: 5px;
     overflow: hidden;
-    z-index: 350;
+    z-index: 440;
+    box-shadow: 0px 0px 1px var(--text-color);
 }
+
 
 .previous-ideas-wrapper span {
     font-weight: 400;
@@ -104,20 +117,22 @@
     border-radius: 7px;
 }
 
-.previous-ideas div {
+.previous-ideas p {
     padding: 0.5rem 1rem;
     font-size: 16px;
     font-weight: 300;
     display: flex;
     flex-direction: row;
     align-items: center;
+    cursor: pointer;
 }
 
-.previous-ideas div:hover {
-    background-color: var(--text-color);
+.previous-ideas p:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #ffff;
 }
 
-.previous-ideas div p span, .arrow-right{
+.previous-ideas p span{
     display: inline-block;
     color: var(--primary-variant-color);
     background-color: transparent;
@@ -125,7 +140,10 @@
     padding: 0;
 }
 
-.arrow-right {
-    margin: 0 0.2rem;
-    display: inline-block;
+.previous-ideas p:hover span {
+    color: #fff;
+}
+
+.hightlight {
+    color: var(--primary-color);
 }

@@ -1,27 +1,32 @@
 <div class="container content-wrapper">
-    <div class="idea-wrapper" id="two">
+    <div class="idea-wrapper" id="two" [formGroup]="CurrentIdeas">
         <p class="content-date">Today</p>
-        <div class="ideas" [formGroup]="CurrentIdeas">
-            <div class="editor-wrapper" *ngFor="let control of CurrentIdeas.controls | keyvalue">
+        <div class="ideas" formArrayName="items">
+            <div class="editor-wrapper" *ngFor="let div of items.controls.slice().reverse(); let idx = index;">
                 <small class="time"></small>
-                <textarea [formControlName]="control.key" (input)="changeDetection($event, control.key)"
-                    class="textarea">
-                </textarea>
+                <div 
+                    contenteditable="true" 
+                    [id]="'editable_' + idx" 
+                    [formGroupName]="idx" 
+                    (input)="changeDetection($event, idx)"
+                    class="textarea"
+                    (blur)="addIdea(idx)"
+                    (keydown)="deleteIdeas($event, idx)"
+                    >
+                </div>
                 <!-- all ideas dialog box -->
                 <div class="previous-ideas-wrapper"
-                    *ngIf="ideaMenuOpen.flag && control.key === ideaMenuOpen.control" [ngStyle]="boxPosition">
+                    *ngIf="ideaMenuOpen.flag && idx === ideaMenuOpen.control && ideaMenuOpen.length > 0" [ngStyle]="boxPosition">
                     <span>Select Ideas</span>
-                    <div class="previous-ideas" *ngFor="let idea of allIdeas;let i = index;">
-                        <div (click)="addAnotherIdeaAsRef(control.key, i)">
-                            <p *ngFor="let ref of idea; let j = index;">
-                                <span>{{ref}}</span>
-                                <fa-icon *ngIf="j < idea.length - 1" class="arrow-right"
-                                    [icon]="faArrowRightLong"></fa-icon>
-                            </p>
-                        </div>
+                    <div class="previous-ideas">
+                        <p *ngFor="let idea of getAllIdeas(); let i = index;" (click)="addAnotherIdeaAsRef(idx, i)">
+                            <span>{{idea}}</span>
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<div class="cover" *ngIf="ideaMenuOpen.flag" (click)="clickedOutside()"></div>

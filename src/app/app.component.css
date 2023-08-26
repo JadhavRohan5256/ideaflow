@@ -91,8 +91,27 @@
 
 /* main content  */
 .main-content {
-    transform: translateY(71.2px);
+    transform: translateY(51.2px);
+    height: calc(100vh - 51.2px);
     color: var(--text-color);
+    overflow-y: auto;
+    scroll-behavior:smooth;
+}
+
+.main-content::-webkit-scrollbar {
+    width: 5px;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 5px;
+}
+
+.main-content::-webkit-scrollbar-track {
+    box-shadow: 0px 0px 1px var(--text-color);
+    border-radius: 5px;
+    background-color: var(--bg-surface-color);
+    overflow: hidden;
 }
 
 @media only screen and (max-width: 1050px) {
