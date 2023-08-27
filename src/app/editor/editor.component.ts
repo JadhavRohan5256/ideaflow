@@ -119,11 +119,15 @@ export class EditorComponent implements OnInit, OnDestroy {
         if (controlValue && controlValue !== selectedIdea) {
             let modifiedValue = `<span style="color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;"><>${selectedIdea}`;
             let contentEditableDiv = document.getElementById(`editable_${idx}`) as HTMLDivElement;
-            if(contentEditableDiv.textContent?.endsWith('<>')) {
-                contentEditableDiv.textContent = contentEditableDiv.textContent.slice(0, -2)
+            contentEditableDiv.innerHTML = contentEditableDiv.innerHTML?.replaceAll('&lt;&gt;&lt;&gt;', '&lt;&gt;')
+            contentEditableDiv.innerHTML = contentEditableDiv.innerHTML.replaceAll('&lt;&gt;</span>', '</span>')
+            if(contentEditableDiv.innerHTML?.endsWith('&lt;&gt;')) {
+                contentEditableDiv.innerHTML = contentEditableDiv.innerHTML.slice(0, -8)
             }
+
             contentEditableDiv.innerHTML += modifiedValue;
-            this.updateControlValue(controlValue + '<>' + selectedIdea, idx);
+            console.log(contentEditableDiv.innerHTML)
+            this.updateControlValue(controlValue +'<>'+ selectedIdea, idx);
         }
         this.ideaMenuOpen = {
             flag: false,
