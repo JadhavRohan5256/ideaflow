@@ -37,7 +37,7 @@ export class EditorComponent implements OnInit, OnDestroy {
             let splittedArr = idea.split('<>')
             splittedArr.forEach((item, i) => {
                 if (item !== '' && i > 0) {
-                    htmlCode += `<span style="color: #018786; font-weight: 500;"><>${item}</span>`
+                    htmlCode += `<span style="color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;"><>${item}</span>`
                 }
             })
 
@@ -117,7 +117,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     addAnotherIdeaAsRef(idx: number, selectedIdea: string) {
         let controlValue = this.items.at(idx).value;
         if (controlValue && controlValue !== selectedIdea) {
-            let modifiedValue = `<span style="color: #018786; font-weight: 500;"><>${selectedIdea}`;
+            let modifiedValue = `<span style="color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;"><>${selectedIdea}`;
             let contentEditableDiv = document.getElementById(`editable_${idx}`) as HTMLDivElement;
             if(contentEditableDiv.textContent?.endsWith('<>')) {
                 contentEditableDiv.textContent = contentEditableDiv.textContent.slice(0, -2)
