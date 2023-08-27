@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, Renderer2 } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { FormArray, FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { AppService } from "../app.service";
 import { faArrowRightLong } from '@fortawesome/free-solid-svg-icons'
@@ -19,7 +19,6 @@ export class EditorComponent implements OnInit, OnDestroy {
         'flag': false,
         'length': 0
     }
-
     allIdeas: string[] = []
 
     constructor(
@@ -30,34 +29,39 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.allIdeas = this.appService.getIdeas();
-        let modifed = this.allIdeas.map((idea) => {
+
+        let allIdeas!:string[];
+        allIdeas = this.appService.getIdeas().filter((idea)=>idea !== "");
+        let allIdeasHTML = allIdeas.map((idea) => {
             let htmlCode = '';
             let splittedArr = idea.split('<>')
-            if (splittedArr.length > 0) {
-                splittedArr.forEach((item, i) => {
-                    if (item !== '' && i > 0) htmlCode += `<span style="color: #018786; font-weight: 500;"><>${item}</span>`
-                })
-            }
+            splittedArr.forEach((item, i) => {
+                if (item !== '' && i > 0) {
+                    htmlCode += `<span style="color: #018786; font-weight: 500;"><>${item}</span>`
+                }
+            })
 
             return splittedArr[0] + htmlCode;
         })
 
-        this.CurrentIdeas = this.formBuilder.group({
-            'items': this.formBuilder.array(this.allIdeas)
-        });
+        if(allIdeas.length === 0) {
+            allIdeas.push('')
+        }
 
+        this.CurrentIdeas = new FormGroup({
+            'items': this.formBuilder.array(allIdeas)
+        });
+        
         setTimeout(() => {
-            modifed = modifed.reverse();
-            if (modifed.length > 0) {
-                modifed.forEach((item, i) => {
+            if (allIdeasHTML.length > 0) {
+                allIdeasHTML.forEach((item, i) => {
                     let eleRef = document.getElementById(`editable_${i}`) as HTMLDivElement;
                     if (eleRef) {
                         eleRef.innerHTML = item;
                     }
                 })
             }
-        }, 200);
+        }, 5);
 
         this.appService.newIdea.subscribe((value) => {
             if (value) {
@@ -70,59 +74,62 @@ export class EditorComponent implements OnInit, OnDestroy {
         return this.CurrentIdeas.get('items') as FormArray
     }
 
-    getAllIdeas() {
-        const modif = this.allIdeas.filter((val) => val !== '');
-        return modif
+    getAllIdeas(): string[] {
+        return [...this.items.value].filter((idea) => idea !== '')
     }
+
 
     changeDetection(event: any, idx: number) {
         let contentValue = (event.target as HTMLDivElement).textContent;
         contentValue = this.replacedValue(contentValue);
-        if (contentValue === '') return;
-        this.updateDivValue(contentValue, idx);
+        this.updateControlValue(contentValue, idx, event)
         if (contentValue.endsWith('<>')) {
             this.ideaMenuOpen = {
                 flag: true,
                 control: idx,
-                length: this.allIdeas.length
+                length: this.getAllIdeas().length
             }
         }
         else {
             this.ideaMenuOpen = {
                 flag: false,
-                length: this.allIdeas.length
+                length: this.getAllIdeas().length
             }
         }
-        this.boxPosition = this.getCursorPos(event, idx);
 
     }
 
-    updateDivValue(newValue: string, index: number) {
-        this.items.controls[index].setValue(newValue)
+    updateControlValue(contentValue: string, idx: number, event?: any): void {
+        if (event) {
+            this.boxPosition = this.getCursorPos(event, idx);
+        }
+        
+        if (contentValue.endsWith('<>')) {
+            this.items.controls[idx].setValue(contentValue.slice(0, -2))
+        }
+        else {
+            this.items.controls[idx].setValue(contentValue)
+        }
+
+        this.saveData();
     }
 
-    addAnotherIdeaAsRef(idx: number, index: number) {
+    addAnotherIdeaAsRef(idx: number, selectedIdea: string) {
         let controlValue = this.items.at(idx).value;
-        if (controlValue && controlValue !== this.allIdeas[index]) {
-            let modifiedValue = `<span style="color: #018786; font-weight: 500;">${this.allIdeas[index]}`;
+        if (controlValue && controlValue !== selectedIdea) {
+            let modifiedValue = `<span style="color: #018786; font-weight: 500;"><>${selectedIdea}`;
             let contentEditableDiv = document.getElementById(`editable_${idx}`) as HTMLDivElement;
-            contentEditableDiv.innerHTML += modifiedValue;
-            let innerText = this.replacedValue(contentEditableDiv.textContent);
-            if (innerText && !this.allIdeas.includes(innerText)) {
-                if (this.allIdeas.includes(controlValue)) {
-                    this.allIdeas[this.allIdeas.indexOf(controlValue)] = innerText;
-                }
-                else {
-                    this.allIdeas.push(innerText)
-                }
+            if(contentEditableDiv.textContent?.endsWith('<>')) {
+                contentEditableDiv.textContent = contentEditableDiv.textContent.slice(0, -2)
             }
+            contentEditableDiv.innerHTML += modifiedValue;
+            this.updateControlValue(controlValue + '<>' + selectedIdea, idx);
         }
         this.ideaMenuOpen = {
             flag: false,
             control: idx,
-            length: this.allIdeas.length
+            length: this.getAllIdeas().length
         }
-        this.ngOnDestroy()
     }
 
     private replacedValue(rawValue: string | null): string {
@@ -134,14 +141,13 @@ export class EditorComponent implements OnInit, OnDestroy {
 
     private getCursorPos(event: Event, idx: number): { 'left': string, 'top': string } {
         const eventRef = event.target as HTMLInputElement;
-        let selectionStart = eventRef.selectionStart;
         const selection = window.getSelection();
-        if (selection && selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            selectionStart = range.startOffset;
+        let selectionStart = 0;
+        if (selection) {
+            selectionStart = selection.focusOffset
+
         }
-        if (!selectionStart) return { left: '0px', top: '50px' };
-        const textBeforeCaret = this.items.controls[idx].value.substring(0, selectionStart);
+        const textBeforeCaret = this.items.value[idx];
         const span = document.createElement('span');
         span.style.visibility = 'hidden';
         span.style.position = 'absolute';
@@ -152,41 +158,69 @@ export class EditorComponent implements OnInit, OnDestroy {
         const caretPositionX = span.offsetWidth;
         const caretPositionY = span.offsetHeight;
         document.body.removeChild(span);
-
         return {
             'left': `${caretPositionX}px`,
             'top': `${caretPositionY + 50}px`
         }
     }
-
-    addIdea(idx: number) {
-        let idea = this.items.at(idx).value
-        if (!this.allIdeas.includes(idea)) {
-            this.allIdeas.push(idea)
+  
+    onAnyKeyPress(idx: number, event: KeyboardEvent) {
+        if (event.key === 'Delete') {
+            this.onClickDeleteIdea(idx, true)
         }
-        this.ngOnDestroy()
+
+        if(event.altKey && event.key) {
+            this.duplicateControl(idx, event.key);
+        }
+
+        if(event.ctrlKey && (event.key === 'Enter' || event.key === ' ')) {
+            this.boxPosition = this.getCursorPos(event, idx);
+            this.ideaMenuOpen = {
+                flag: true,
+                control: idx,
+                length: this.getAllIdeas().length
+            }
+        }
     }
 
-    deleteIdeas(event: KeyboardEvent, idx: number) {
-        if (event.key === 'Delete') {
+    onClickDeleteIdea(idx: number, isDelete: boolean) {
+        if (isDelete) {
             let contentEditableDiv = document.getElementById(`editable_${idx}`) as HTMLDivElement;
-            let controlValue = this.items.controls[idx].value;
-            console.log('control value ', controlValue)
-            console.log('span value', contentEditableDiv.querySelector('span:last-of-type')?.textContent)
-            contentEditableDiv.querySelector('span:last-of-type')?.remove()
+            let lastSpan = contentEditableDiv.querySelector('span:last-of-type')
+            if(lastSpan) {
+                lastSpan?.remove()
+                this.updateControlValue(this.replacedValue(contentEditableDiv.textContent), idx);
+            }
+            else{
+                this.items.removeAt(idx);
+            }
+
+            this.saveData()
         }
-        this.ngOnDestroy()
     }
 
     clickedOutside(): void {
         this.ideaMenuOpen = {
             flag: false,
-            length: this.allIdeas.length
+            length: this.getAllIdeas().length
         }
     }
 
+    duplicateControl(idx: number, key: string): void {
+        const controlToDuplicate =  this.items.at(idx);
+        const duplicatedControl = new FormControl('');
+        if(key === 'ArrowDown') {
+            console.log('added down')
+            this.items.insert(idx - 1, duplicatedControl);
+        }
+        this.saveData()
+    }
+
     ngOnDestroy(): void {
-        this.allIdeas = this.getAllIdeas()
-        this.appService.saveIdeas(this.allIdeas)
+        this.saveData();
+    }
+    
+    private saveData(): void {
+        this.appService.saveIdeas([...this.items.value])
     }
 }

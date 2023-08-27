@@ -2,24 +2,37 @@
     <div class="idea-wrapper" id="two" [formGroup]="CurrentIdeas">
         <p class="content-date">Today</p>
         <div class="ideas" formArrayName="items">
-            <div class="editor-wrapper" *ngFor="let div of items.controls.slice().reverse(); let idx = index;">
-                <small class="time"></small>
+            <div 
+                class="editor-wrapper" 
+                *ngFor="let div of items.controls.slice().reverse(); let idx = index;">
                 <div 
                     contenteditable="true" 
-                    [id]="'editable_' + idx" 
-                    [formGroupName]="idx" 
-                    (input)="changeDetection($event, idx)"
+                    [id]="'editable_' + ((items.value.length - 1) - idx)" 
+                    (input)="changeDetection($event, ((items.value.length - 1) - idx))"
                     class="textarea"
-                    (blur)="addIdea(idx)"
-                    (keydown)="deleteIdeas($event, idx)"
+                    (keydown)="onAnyKeyPress(((items.value.length - 1) - idx), $event)"
+                    matTooltip="Press Alt + ArrowDown to add one more editor"
                     >
                 </div>
+                <div class="editor-warpper-right" (click)="onClickDeleteIdea(((items.value.length - 1) - idx), true)">
+                    <div class="close-wrapper">
+                        <div class="close-icon">
+                            <p></p>
+                            <p></p>
+                        </div>
+                    </div>
+                    <!-- <p class="time">2:60 Am</p> -->
+                </div>
                 <!-- all ideas dialog box -->
-                <div class="previous-ideas-wrapper"
-                    *ngIf="ideaMenuOpen.flag && idx === ideaMenuOpen.control && ideaMenuOpen.length > 0" [ngStyle]="boxPosition">
+                <div 
+                    class="previous-ideas-wrapper"
+                    *ngIf="ideaMenuOpen.flag && ((items.value.length - 1) - idx) === ideaMenuOpen.control &&  ideaMenuOpen.length > 0" 
+                    [ngStyle]="boxPosition">
                     <span>Select Ideas</span>
                     <div class="previous-ideas">
-                        <p *ngFor="let idea of getAllIdeas(); let i = index;" (click)="addAnotherIdeaAsRef(idx, i)">
+                        <p 
+                            *ngFor="let idea of getAllIdeas(); let i = index;" 
+                            (click)="addAnotherIdeaAsRef(((items.value.length - 1) - idx), idea)">
                             <span>{{idea}}</span>
                         </p>
                     </div>

@@ -79,13 +79,14 @@
 
 .nav-right .icons:first-of-type {
     background-color: var(--primary-color);
-    padding: 0.2rem 0.5rem;
+    padding:0.3rem 0.6rem;
     border-radius: 3px;
     color: #212121;
 }
 
 .nav-right .icons:last-of-type:hover {
-    color: var(--primary-variant-color);
+    opacity: 0.5;
+    color: #fff;
 }
 
 
