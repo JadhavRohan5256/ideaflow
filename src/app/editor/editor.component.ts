@@ -126,7 +126,6 @@ export class EditorComponent implements OnInit, OnDestroy {
             }
 
             contentEditableDiv.innerHTML += modifiedValue;
-            console.log(contentEditableDiv.innerHTML)
             this.updateControlValue(controlValue +'<>'+ selectedIdea, idx);
         }
         this.ideaMenuOpen = {
