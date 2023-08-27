@@ -11,8 +11,12 @@
                     (input)="changeDetection($event, ((items.value.length - 1) - idx))"
                     class="textarea"
                     (keydown)="onAnyKeyPress(((items.value.length - 1) - idx), $event)"
-                    matTooltip="Press Alt + ArrowDown to add one more editor"
                     >
+                </div>
+                <div class="placeholder" *ngIf="div.value === ''">
+                    <p>Press Alt + ArrowDown to add one more editor.</p>
+                    <p>Press Ctrl + Space to open ideas dialog box.</p>
+                    <p>For Deletion Press Delete Btn</p>
                 </div>
                 <div class="editor-warpper-right" (click)="onClickDeleteIdea(((items.value.length - 1) - idx), true)">
                     <div class="close-wrapper">

@@ -160,7 +160,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         document.body.removeChild(span);
         return {
             'left': `${caretPositionX}px`,
-            'top': `${caretPositionY + 50}px`
+            'top': `${caretPositionY + 10}px`
         }
     }
   
@@ -222,5 +222,13 @@ export class EditorComponent implements OnInit, OnDestroy {
     
     private saveData(): void {
         this.appService.saveIdeas([...this.items.value])
+    }
+
+    showPlaceholder(idx: number): {idx: number, flag: boolean} {
+        let eleRef = document.getElementById(`editable_${idx}`) as HTMLDivElement
+        if(eleRef === null || eleRef === undefined || eleRef.textContent === '') {
+            return {idx: idx, flag: true}
+        }
+        return {idx: idx, flag: false}
     }
 }
