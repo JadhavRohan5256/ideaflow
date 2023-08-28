@@ -137,8 +137,7 @@ export class EditorComponent implements OnInit, OnDestroy {
 
     private replacedValue(rawValue: string | null): string {
         if (!rawValue) return '';
-        let replacedValue = rawValue.replaceAll(' ', '')
-        replacedValue = replacedValue.replaceAll(/\n/g, '');
+        let replacedValue = rawValue.replaceAll(/\n/g, '');
         return replacedValue;
     }
 
@@ -210,11 +209,9 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     duplicateControl(idx: number, key: string): void {
-        const controlToDuplicate =  this.items.at(idx);
         const duplicatedControl = new FormControl('');
         if(key === 'ArrowDown') {
-            console.log('added down')
-            this.items.insert(idx - 1, duplicatedControl);
+            this.items.insert(idx, duplicatedControl);
         }
         this.saveData()
     }
