@@ -3,8 +3,8 @@
         <p class="content-date">Today</p>
         <div class="ideas" formArrayName="items">
             <div 
-                class="editor-wrapper" 
-                *ngFor="let div of items.controls.slice().reverse(); let idx = index;">
+            class="editor-wrapper" 
+            *ngFor="let div of items.controls.slice().reverse(); let idx = index;">
                 <div 
                     contenteditable="true" 
                     [id]="'editable_' + ((items.value.length - 1) - idx)" 
@@ -18,7 +18,7 @@
                     <p>Press Ctrl + Space to open ideas dialog box.</p>
                     <p>For Deletion Press Delete Btn</p>
                 </div>
-                <div class="editor-warpper-right" (click)="onClickDeleteIdea(((items.value.length - 1) - idx), true)">
+                <div class="editor-warpper-right" (click)="deleteIdeas(((items.value.length - 1) - idx), true)">
                     <div class="close-wrapper">
                         <div class="close-icon">
                             <p></p>

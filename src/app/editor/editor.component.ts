@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit, ElementRef } from "@angular/core";
 import { FormArray, FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { AppService } from "../app.service";
 import { faArrowRightLong } from '@fortawesome/free-solid-svg-icons'
@@ -10,6 +10,7 @@ import { faArrowRightLong } from '@fortawesome/free-solid-svg-icons'
 })
 export class EditorComponent implements OnInit, OnDestroy {
     faArrowRightLong = faArrowRightLong;
+
     boxPosition: { 'left': string, 'top': string } = {
         left: '0px',
         top: '0px'
@@ -23,7 +24,8 @@ export class EditorComponent implements OnInit, OnDestroy {
 
     constructor(
         private appService: AppService,
-        private formBuilder: FormBuilder
+        private formBuilder: FormBuilder,
+        private elementRef: ElementRef
     ) {
 
     }
@@ -75,12 +77,29 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     getAllIdeas(): string[] {
-        return [...this.items.value].filter((idea) => idea !== '')
+        return  [...this.items.value].filter((idea) => idea !== '' && idea !== '<>')
     }
 
+    moveCursorToEnd(editorId: string) {
+        const element = document.getElementById(editorId);
+        if (element) {
+          const range = document.createRange();
+          const selection = window.getSelection();
+    
+          range.selectNodeContents(element);
+          range.collapse(false);
+    
+          if(selection === null) return;
+          selection.removeAllRanges();
+          selection.addRange(range);
+    
+          element.focus();
+        }
+    }
 
     changeDetection(event: any, idx: number) {
         let contentValue = (event.target as HTMLDivElement).textContent;
+
         contentValue = this.replacedValue(contentValue);
         this.updateControlValue(contentValue, idx, event)
         if (contentValue.endsWith('<>')) {
@@ -103,29 +122,31 @@ export class EditorComponent implements OnInit, OnDestroy {
         if (event) {
             this.boxPosition = this.getCursorPos(event, idx);
         }
-        
-        if (contentValue.endsWith('<>')) {
-            this.items.controls[idx].setValue(contentValue.slice(0, -2))
-        }
-        else {
-            this.items.controls[idx].setValue(contentValue)
+
+        if (contentValue.endsWith('<>') && contentValue !== '<>') {
+            contentValue = contentValue.slice(0, -2);
+            
         }
 
+        // contentValue = [...new Set(contentValue.split('<>'))].join('<>')
+        this.items.controls[idx].setValue(contentValue)
         this.saveData();
     }
 
     addAnotherIdeaAsRef(idx: number, selectedIdea: string) {
         let controlValue = this.items.at(idx).value;
-        if (controlValue && controlValue !== selectedIdea) {
-            let modifiedValue = `<span style="color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;"><>${selectedIdea}`;
+        if (controlValue && controlValue !== selectedIdea && controlValue !== '<>') {
+            let modifiedValue = ``;
+            let convertSelectedIdea = [...selectedIdea.split('<>')]
+            let convertControlValue = [...controlValue.split('<>')]
+            convertSelectedIdea = convertSelectedIdea.filter((idea) => !convertControlValue.includes(idea));
+            convertSelectedIdea.forEach((idea) => {
+                modifiedValue += `<span style="color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;"><>${idea}</span>`
+            })
             let contentEditableDiv = document.getElementById(`editable_${idx}`) as HTMLDivElement;
-            contentEditableDiv.innerHTML = contentEditableDiv.innerHTML?.replaceAll('&lt;&gt;&lt;&gt;', '&lt;&gt;')
-            contentEditableDiv.innerHTML = contentEditableDiv.innerHTML.replaceAll('&lt;&gt;</span>', '</span>')
-            if(contentEditableDiv.innerHTML?.endsWith('&lt;&gt;')) {
-                contentEditableDiv.innerHTML = contentEditableDiv.innerHTML.slice(0, -8)
-            }
-
+            modifiedValue = modifiedValue.replace('<>', '')
             contentEditableDiv.innerHTML += modifiedValue;
+            selectedIdea = convertSelectedIdea.join("<>");
             this.updateControlValue(controlValue +'<>'+ selectedIdea, idx);
         }
         this.ideaMenuOpen = {
@@ -168,7 +189,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   
     onAnyKeyPress(idx: number, event: KeyboardEvent) {
         if (event.key === 'Delete') {
-            this.onClickDeleteIdea(idx, true)
+            this.deleteIdeas(idx, true)
         }
 
         if(event.altKey && event.key) {
@@ -185,7 +206,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         }
     }
 
-    onClickDeleteIdea(idx: number, isDelete: boolean) {
+    deleteIdeas(idx: number, isDelete: boolean) {
         if (isDelete) {
             let contentEditableDiv = document.getElementById(`editable_${idx}`) as HTMLDivElement;
             let lastSpan = contentEditableDiv.querySelector('span:last-of-type')
