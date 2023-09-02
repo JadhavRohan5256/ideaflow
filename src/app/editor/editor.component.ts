@@ -221,6 +221,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         if(lastSpan) {
             lastSpan?.remove()
             this.updateControlValue(this.replacedValue(contentEditableDiv.textContent), idx);
+            this.moveCursorToEnd(`editable_${idx}`)
         }
         else{
             if(contentEditableDiv.textContent !== '' && contentEditableDiv.textContent !== null) {
@@ -250,6 +251,14 @@ export class EditorComponent implements OnInit, OnDestroy {
     onClickIcons(idx: number): void {
         let contentEditableDiv = document.getElementById(`editable_${idx}`) as HTMLDivElement;
         let lastSpan = contentEditableDiv.querySelector('span:last-of-type')
+        if(!lastSpan && contentEditableDiv.textContent !== '') {
+            contentEditableDiv.textContent = ''
+            this.updateControlValue(this.replacedValue(contentEditableDiv.textContent), idx);
+            this.moveCursorToEnd(`editable_${idx}`)
+            this.saveData()
+            return;
+        }
+
         if(!lastSpan || contentEditableDiv.textContent === '') {
             this.items.removeAt(idx);
             if(idx === 0) {
