@@ -15,6 +15,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         left: '0px',
         top: '0px'
     }
+    
     CurrentIdeas!: FormGroup;
     ideaMenuOpen: { 'flag': boolean, 'control'?: number, 'length': number } = {
         'flag': false,
@@ -31,7 +32,6 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-
         let allIdeas!:string[];
         allIdeas = this.appService.getIdeas().filter((idea)=>idea !== "");
         let allIdeasHTML = allIdeas.map((idea) => {
@@ -57,7 +57,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         setTimeout(() => {
             if (allIdeasHTML.length > 0) {
                 allIdeasHTML.forEach((item, i) => {
-                    let eleRef = document.getElementById(`editable_${i}`) as HTMLDivElement;
+                    let eleRef = this.textareaRef(i)
                     if (eleRef) {
                         eleRef.innerHTML = item;
                     }
@@ -77,11 +77,11 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     getAllIdeas(): string[] {
-        return  [...this.items.value].filter((idea) => idea !== '' && idea !== '<>')
+        return  [...new Set([...this.items.value].filter((idea) => idea !== '' && idea !== '<>'))]
     }
 
-    moveCursorToEnd(editorId: string) {
-        const element = document.getElementById(editorId);
+    moveCursorToEnd(idx: number) {
+        const element = document.getElementById(`editable_${idx}`);
         if (element) {
           const range = document.createRange();
           const selection = window.getSelection();
@@ -98,12 +98,16 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     changeDetection(event: any, idx: number) {
-        let contentValue = (event.target as HTMLDivElement).textContent;
         let contentValueHtml = (event.target as HTMLDivElement).innerHTML;
-
+        if(contentValueHtml.length === 1) {
+            (event.target as HTMLDivElement).innerHTML = contentValueHtml[0].toUpperCase() + contentValueHtml.slice(1);
+            this.moveCursorToEnd(idx);
+        }
+        
+        let contentValue = (event.target as HTMLDivElement).textContent;
         if(contentValueHtml.endsWith('</span>')) {
             (event.target as HTMLDivElement).innerHTML = contentValueHtml.substring(0, contentValueHtml.length - 8) + '</span>';
-            this.moveCursorToEnd(`editable_${idx}`)
+            this.moveCursorToEnd(idx)
         }
         contentValue = this.replacedValue(contentValue);
         this.updateControlValue(contentValue, idx, event)
@@ -130,10 +134,9 @@ export class EditorComponent implements OnInit, OnDestroy {
 
         if (contentValue.endsWith('<>') && contentValue !== '<>') {
             contentValue = contentValue.slice(0, -2);
-            
         }
 
-        // contentValue = [...new Set(contentValue.split('<>'))].join('<>')
+        contentValue = [...new Set(contentValue.split('<>'))].join('<>')
         this.items.controls[idx].setValue(contentValue)
         this.saveData();
     }
@@ -148,12 +151,12 @@ export class EditorComponent implements OnInit, OnDestroy {
             convertSelectedIdea.forEach((idea) => {
                 modifiedValue += `<span style="color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;"><>${idea}</span>`
             })
-            let contentEditableDiv = document.getElementById(`editable_${idx}`) as HTMLDivElement;
+            let contentEditableDiv = this.textareaRef(idx);
             modifiedValue = modifiedValue.replace('<>', '')
             contentEditableDiv.innerHTML += modifiedValue;
             selectedIdea = convertSelectedIdea.join("<>");
             this.updateControlValue(controlValue +'<>'+ selectedIdea, idx);
-            this.moveCursorToEnd(`editable_${idx}`)
+            this.moveCursorToEnd(idx)
         }
         this.ideaMenuOpen = {
             flag: false,
@@ -194,12 +197,15 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
   
     onAnyKeyPress(idx: number, event: KeyboardEvent) {
-        
         if (event.key === 'Delete' || event.key === 'Backspace') {
             event.preventDefault();
             this.deleteIdeas(idx)
+            this.ideaMenuOpen = {
+                'flag': false,
+                'length': this.allIdeas.length
+            }
         }
-
+        
         if(event.altKey && event.key) {
             this.duplicateControl(idx, event.key);
         }
@@ -212,32 +218,33 @@ export class EditorComponent implements OnInit, OnDestroy {
                 length: this.getAllIdeas().length
             }
         }
+
     }
 
     private deleteIdeas(idx: number) {
-        let contentEditableDiv = document.getElementById(`editable_${idx}`) as HTMLDivElement;
+        let contentEditableDiv = this.textareaRef(idx);
         let lastSpan = contentEditableDiv.querySelector('span:last-of-type')
 
         if(lastSpan) {
             lastSpan?.remove()
             this.updateControlValue(this.replacedValue(contentEditableDiv.textContent), idx);
-            this.moveCursorToEnd(`editable_${idx}`)
+            this.moveCursorToEnd(idx)
         }
         else{
             if(contentEditableDiv.textContent !== '' && contentEditableDiv.textContent !== null) {
                 contentEditableDiv.textContent = contentEditableDiv.textContent?.slice(0, -1);
-                this.moveCursorToEnd(`editable_${idx}`)
+                this.moveCursorToEnd(idx)
             }
             else {
                 this.items.removeAt(idx);
                 if(idx === 0) {
                     setTimeout(() => {
-                        this.moveCursorToEnd(`editable_${idx}`)
+                        this.moveCursorToEnd(idx)
                     }, 10);
                 }
                 else {
                     setTimeout(() => {
-                        this.moveCursorToEnd(`editable_${idx - 1}`)
+                        this.moveCursorToEnd(idx - 1)
                     }, 10);
 
                 }
@@ -249,12 +256,12 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     onClickIcons(idx: number): void {
-        let contentEditableDiv = document.getElementById(`editable_${idx}`) as HTMLDivElement;
+        let contentEditableDiv = this.textareaRef(idx);
         let lastSpan = contentEditableDiv.querySelector('span:last-of-type')
         if(!lastSpan && contentEditableDiv.textContent !== '') {
             contentEditableDiv.textContent = ''
             this.updateControlValue(this.replacedValue(contentEditableDiv.textContent), idx);
-            this.moveCursorToEnd(`editable_${idx}`)
+            this.moveCursorToEnd(idx)
             this.saveData()
             return;
         }
@@ -263,12 +270,12 @@ export class EditorComponent implements OnInit, OnDestroy {
             this.items.removeAt(idx);
             if(idx === 0) {
                 setTimeout(() => {
-                    this.moveCursorToEnd(`editable_${idx}`)
+                    this.moveCursorToEnd(idx)
                 }, 10);
             }
             else {
                 setTimeout(() => {
-                    this.moveCursorToEnd(`editable_${idx - 1}`)
+                    this.moveCursorToEnd(idx - 1)
                 }, 10);
             }
         } else {
@@ -290,16 +297,20 @@ export class EditorComponent implements OnInit, OnDestroy {
         if(key === 'ArrowDown') {
             this.items.insert(idx, duplicatedControl);
             setTimeout(() => {
-                this.moveCursorToEnd(`editable_${idx}`)
+                this.moveCursorToEnd(idx)
             }, 10);
         }
         else if(key === 'ArrowUp') {
             this.items.insert(idx + 1, duplicatedControl);
             setTimeout(() => {
-                this.moveCursorToEnd(`editable_${idx + 1}`)
+                this.moveCursorToEnd(idx + 1)
             }, 10);
         }
 
+        this.ideaMenuOpen = {
+            'flag': false,
+            'length': this.allIdeas.length
+        }
         this.saveData()
     }
 
@@ -311,11 +322,15 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.appService.saveIdeas([...this.items.value])
     }
 
-    showPlaceholder(idx: number): {idx: number, flag: boolean} {
-        let eleRef = document.getElementById(`editable_${idx}`) as HTMLDivElement
-        if(eleRef === null || eleRef === undefined || eleRef.textContent === '') {
-            return {idx: idx, flag: true}
+    showPlaceholder(idx: number): boolean {
+        let eleRef = this.textareaRef(idx)
+        if(!eleRef.textContent && eleRef.textContent === '') {
+            return true;
         }
-        return {idx: idx, flag: false}
+        return false;
+    }
+
+    private textareaRef(idx: number): HTMLDivElement {
+        return document.getElementById(`editable_${idx}`) as HTMLDivElement;
     }
 }

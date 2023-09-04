@@ -25,34 +25,38 @@
     flex-direction: row;
     align-items: center;
     position: relative;
-    box-shadow: 0 1.5px 1px -1px gray;
+    box-shadow: 0 3px 10px var(--shadow-color);
+    margin: 0.5rem 0;
+    border-radius: 5px;
 }
 
 .placeholder {
     position: absolute;
     left: 0;
     top: 0.5rem;
-    background-color: var(--bg-color);
+    background-color: transparent;
     border-radius: 5px;
     overflow: hidden;
     z-index: 20;
     font-style: italic;
-    opacity: 0.4;
+    color: #808080;
     user-select: none;
     font-size: 1rem;
+    padding: 0 0.5rem;
 }
 
 .editor-warpper-right {
     width: 50px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
 
 .close-wrapper {
     width: 20px;
     cursor: pointer;
-    margin-top: 1rem;
+    margin-top: -1.5rem;
+    margin-right: 0.2rem;
     align-self: end;
 }
 
@@ -84,6 +88,10 @@
     align-self: end;
 }
 
+.editor-wrapper {
+    background-color: var(--bg-surface-color);
+}
+
 .editor-wrapper .textarea {
     background-color: transparent;
     outline: none;
@@ -97,25 +105,11 @@
     font-weight: 200;
     overflow-y: auto;
     margin-top: 0.5rem;
+    padding: 0 0.5rem;
     z-index: 30;
-    
+    overflow-x: hidden;
 }
 
-.editor-wrapper .textarea::-webkit-scrollbar {
-    width: 7px;
-}
-
-.editor-wrapper .textarea::-webkit-scrollbar-thumb {
-    background-color: var(--primary-color);
-    border-radius: 5px;
-}
-
-.editor-wrapper .textarea::-webkit-scrollbar-track {
-    box-shadow: 0px 0px 1px var(--text-color);
-    background-color: var(--bg-surface-color);
-    border-radius: 5px;
-    overflow: hidden;
-}
 
 .cover {
     position: fixed;
@@ -125,6 +119,7 @@
     height: 100vh;
     z-index: 200;
     margin-top: -71.2px;
+    overflow: hidden;
 }
 
 .previous-ideas-wrapper {

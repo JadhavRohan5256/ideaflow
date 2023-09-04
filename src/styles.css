@@ -15,12 +15,13 @@
     --danger: #CF6679;
 }
 
-:root {
-    /* Dark Mode  */
+/* :root {
+    Dark Mode 
     --bg-color: #212121;
     --bg-surface-color: #ffffff1a; 
     --text-color: #ECEFF1;
-}
+    --shadow-color: transparent;
+} */
 
 *,
 *::after,
