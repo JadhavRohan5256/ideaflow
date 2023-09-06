@@ -23,6 +23,10 @@
     width: 50px;
 }
 
+.nav-left .icons:last-of-type {
+    color: var(--primary-variant-color);
+}
+
 .nav-left .icons:hover {
     color: var(--primary-variant-color);
 }

@@ -1,8 +1,8 @@
 <div class="header-wrapper">
   <div class="nav container">
     <div class="nav-left">
-      <fa-icon class="icons" *ngIf="isDark" [icon]="faMoon" (click)="changeMode()"></fa-icon>
-      <fa-icon class="icons" *ngIf="!isDark" [icon]="faSun" (click)="changeMode()"></fa-icon>
+      <fa-icon class="icons" *ngIf="!isDark" [icon]="faMoon" (click)="changeMode()"></fa-icon>
+      <fa-icon class="icons" *ngIf="isDark" [icon]="faSun" (click)="changeMode()"></fa-icon>
       <fa-icon class="icons" [icon]="faArrowLeft"></fa-icon>
     </div>
     <div class="nav-middle">
