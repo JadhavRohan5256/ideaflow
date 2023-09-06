@@ -212,6 +212,9 @@ export class EditorComponent implements OnInit, OnDestroy {
 
         if(event.ctrlKey && (event.key === 'Enter' || event.key === ' ')) {
             this.boxPosition = this.getCursorPos(event, idx);
+            let contentValue = (event.target as HTMLDivElement).textContent;
+            contentValue =  this.replacedValue(contentValue);
+            if(!contentValue.endsWith('<>')) return;
             this.ideaMenuOpen = {
                 flag: true,
                 control: idx,
