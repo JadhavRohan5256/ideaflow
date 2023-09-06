@@ -81,7 +81,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     moveCursorToEnd(idx: number) {
-        const element = document.getElementById(`editable_${idx}`);
+        let element = this.textareaRef(idx);
         if (element) {
           const range = document.createRange();
           const selection = window.getSelection();
@@ -98,17 +98,13 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     changeDetection(event: any, idx: number) {
-        let contentValueHtml = (event.target as HTMLDivElement).innerHTML;
+        let contentValueHtml  = (event.target as HTMLDivElement).innerHTML;
         if(contentValueHtml.length === 1) {
             (event.target as HTMLDivElement).innerHTML = contentValueHtml[0].toUpperCase() + contentValueHtml.slice(1);
             this.moveCursorToEnd(idx);
         }
         
         let contentValue = (event.target as HTMLDivElement).textContent;
-        if(contentValueHtml.endsWith('</span>')) {
-            (event.target as HTMLDivElement).innerHTML = contentValueHtml.substring(0, contentValueHtml.length - 8) + '</span>';
-            this.moveCursorToEnd(idx)
-        }
         contentValue = this.replacedValue(contentValue);
         this.updateControlValue(contentValue, idx, event)
         if (contentValue.endsWith('<>')) {
