@@ -11,10 +11,14 @@ import { faArrowRightLong } from '@fortawesome/free-solid-svg-icons'
 export class EditorComponent implements OnInit, OnDestroy {
     faArrowRightLong = faArrowRightLong;
 
-    isSelected: boolean = false;
     boxPosition: { 'left': string, 'top': string } = {
         left: '0px',
         top: '0px'
+    }
+
+    floatingPos: {'left': string, 'top': string} = {
+        left: 'calc(((100vw - 1000px) / 2))',
+        top: '70px'
     }
 
     CurrentIdeas!: FormGroup;
@@ -323,7 +327,6 @@ export class EditorComponent implements OnInit, OnDestroy {
             const range = selection.getRangeAt(0);
             range.deleteContents();
             range.collapse(false);
-            this.isSelected = false;
         } else {
             //selecting editor all span element 
             const range = document.createRange();
@@ -335,7 +338,6 @@ export class EditorComponent implements OnInit, OnDestroy {
                 if (!selection) return;
                 selection.removeAllRanges();
                 selection.addRange(range);
-                this.isSelected = true;
             }
         }
     }
@@ -352,7 +354,19 @@ export class EditorComponent implements OnInit, OnDestroy {
     private saveData(): void {
         this.appService.saveIdeas([...this.items.value])
     }
-  
+
+
+    dragFloatingItem(event: any): void {
+        // console.log(event)
+        if(event.x > 50 && event.y > 50) {
+            this.floatingPos = {
+                left: `${event.pageX - 100}px`,
+                top: `${event.pageY}px`
+            }
+        }
+    }
+    
+
     ngOnDestroy(): void {
         this.saveData();
     }

@@ -97,10 +97,10 @@
 
 /* main content  */
 .main-content {
-    transform: translateY(51.2px);
+    padding-top: 51.2px;
     height: calc(100vh - 51.2px);
     color: var(--text-color);
-    overflow-y: auto;
+    overflow-y: scroll;
     scroll-behavior:smooth;
     overflow-x: hidden;
 }
