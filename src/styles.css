@@ -37,6 +37,10 @@ body {
     overflow: hidden;
 }
 
+::selection {
+    background-color: var(--danger);
+    color: #212121;
+}
 
 .container {
     width: 1000px;

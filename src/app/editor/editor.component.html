@@ -35,7 +35,7 @@
                     <span>Select Ideas</span>
                     <div class="previous-ideas">
                         <p 
-                            *ngFor="let idea of getAllIdeas(); let i = index;" 
+                            *ngFor="let idea of getAllIdeas(((items.value.length - 1) - idx)); let i = index;" 
                             (click)="addAnotherIdeaAsRef(((items.value.length - 1) - idx), idea)">
                             <span>{{idea}}</span>
                         </p>
