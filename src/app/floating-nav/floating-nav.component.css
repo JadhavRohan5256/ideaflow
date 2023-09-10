@@ -16,7 +16,7 @@
 
 .wrapper img {
     width: 25px;
-    pointer-events: none;
+    user-select: none;
 }
 
 
@@ -85,6 +85,7 @@
     width: 25px;
     transform: rotate(-45deg);  
     cursor: pointer;
+    user-select: none;
 }
 
 .download {
