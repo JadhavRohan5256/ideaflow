@@ -14,6 +14,7 @@ export class AppService {
     }
 
     saveIdeas(ideas: string[]) {
+        ideas = ideas.filter((item) => item !== "");
         localStorage.setItem('allIdeas', JSON.stringify(ideas))
     }
     
