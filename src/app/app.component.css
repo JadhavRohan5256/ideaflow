@@ -97,7 +97,7 @@
 
 /* main content  */
 .main-content {
-    padding-top: 81.2px;
+    transform: translateY(51.2px);
     height: calc(100vh - 51.2px);
     color: var(--text-color);
     overflow-y: scroll;

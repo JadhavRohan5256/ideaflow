@@ -1,15 +1,21 @@
 
 .floating-wrapper {
-    position: fixed;
-    top: 70px;
-    left: calc(((100vw - 1000px) / 2));
-    width: 218px;
-    z-index: 390;
+    position: relative;
+    z-index: 1000;
+    cursor: grab;
+    margin: 20px 0;
 }
 
 
 .content-wrapper {
     position: relative;
+    overflow-y: auto;
+    height: calc(100vh - 51.2px);
+    padding: 0.5rem;
+}
+
+.content-wrapper::-webkit-scrollbar {
+    display: none;
 }
 
 .idea-wrapper {
@@ -201,7 +207,6 @@
 .hightlight {
     color: var(--primary-color);
 }
-
 
 @media only screen and (max-width: 500px) {
     .placeholder {

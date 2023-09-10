@@ -1,13 +1,14 @@
-<div 
-    class="floating-wrapper" [ngStyle]="floatingPos"
-    (drag)="dragFloatingItem($event)"
-    (dragleave)="dragFloatingItem($event)">
-    <app-floating-nav></app-floating-nav>
+<div class="container">
+    <div 
+        class="floating-wrapper"
+        >
+        <app-floating-nav></app-floating-nav>
+    </div>
 </div>
 
-<div class="container content-wrapper">
+<div class="container content-wrapper" >
+    <p class="content-date">Today</p>
     <div class="idea-wrapper" id="two" [formGroup]="CurrentIdeas">
-        <p class="content-date">Today</p>
         <div class="ideas" formArrayName="items">
             <div 
             class="editor-wrapper" 
