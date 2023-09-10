@@ -1,7 +1,7 @@
 .wrapper {
     background-color: var(--bg-surface-color);
-    z-index: 400;
-    width: auto;
+    z-index: 1500;
+    width: 218px !important;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -10,6 +10,7 @@
     border-radius: 5px;
     box-shadow: 0 3px 10px var(--shadow-color);
     color: var(--text-color);
+    position: fixed;
 }
 
 

@@ -16,11 +16,6 @@ export class EditorComponent implements OnInit, OnDestroy {
         top: '0px'
     }
 
-    floatingPos: {'left': string, 'top': string} = {
-        left: 'calc(((100vw - 1000px) / 2))',
-        top: '71px'
-    }
-
     CurrentIdeas!: FormGroup;
     ideaMenuOpen: { 'flag': boolean, 'control'?: number, 'length': number } = {
         'flag': false,
@@ -354,19 +349,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     private saveData(): void {
         this.appService.saveIdeas([...this.items.value])
     }
-
-
-    dragFloatingItem(event: any): void {
-        // console.log(event)
-        if(event.x > 50 && event.y > 50 && event.x < (window.innerWidth - 50) && event.y < (window.innerHeight - 50)) {
-            this.floatingPos = {
-                left: `${event.pageX - 100}px`,
-                top: `${event.pageY}px`
-            }
-        }
-    }
     
-
     ngOnDestroy(): void {
         this.saveData();
     }
