@@ -2,8 +2,8 @@
 .floating-wrapper {
     position: fixed;
     top: 70px;
-    width: 218px;
     left: calc(((100vw - 1000px) / 2));
+    width: 218px;
     z-index: 390;
 }
 

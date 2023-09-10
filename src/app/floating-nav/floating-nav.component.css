@@ -12,13 +12,17 @@
     color: var(--text-color);
 }
 
+
 .wrapper img {
     width: 25px;
+    pointer-events: none;
 }
+
 
 .folder {
     position: relative;
     z-index: 600;
+    user-select: none;
 }
 
 .folder-wrapper {

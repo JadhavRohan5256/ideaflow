@@ -1,8 +1,7 @@
 <div 
-    class="floating-wrapper" 
-    [ngStyle]="floatingPos"  
-    (drag)="dragFloatingItem($event)" 
-    (dragend)="dragFloatingItem($event)">
+    class="floating-wrapper" [ngStyle]="floatingPos"
+    (drag)="dragFloatingItem($event)"
+    (dragleave)="dragFloatingItem($event)">
     <app-floating-nav></app-floating-nav>
 </div>
 
