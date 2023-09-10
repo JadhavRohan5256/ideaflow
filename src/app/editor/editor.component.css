@@ -15,7 +15,17 @@
 }
 
 .content-wrapper::-webkit-scrollbar {
-    display: none;
+    width: 4px;
+}
+
+.content-wrapper::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 4px;
+}
+
+.content-wrapper::-webkit-scrollbar-track {
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .idea-wrapper {
@@ -27,6 +37,7 @@
     position: sticky;
     top: 0;
     right:0;
+    z-index: 400;
 }
 
 .ideas {
@@ -127,6 +138,9 @@
     overflow-x: hidden;
 }
 
+.textarea::-webkit-scrollbar {
+    display: none;
+}
 
 .cover {
     position: fixed;
