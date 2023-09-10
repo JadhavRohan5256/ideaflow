@@ -35,18 +35,6 @@ export class EditorComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         let allIdeas!: string[];
         allIdeas = this.appService.getIdeas().filter((idea) => idea !== "");
-        let allIdeasHTML = allIdeas.map((idea) => {
-            let htmlCode = '';
-            let splittedArr = idea.split('<>')
-            splittedArr.forEach((item, i) => {
-                if (item !== '' && i > 0) {
-                    htmlCode += `<span style="color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;"><>${item}</span>`
-                }
-            })
-
-            return splittedArr[0] + htmlCode;
-        })
-
         if (allIdeas.length === 0) {
             allIdeas.push('')
         }
@@ -56,12 +44,20 @@ export class EditorComponent implements OnInit, OnDestroy {
         });
 
         setTimeout(() => {
-            if (allIdeasHTML.length > 0) {
-                allIdeasHTML.forEach((item, i) => {
+            if (allIdeas.length > 0) {
+                allIdeas.forEach((idea, i) => {
                     let eleRef = this.textareaRef(i)
-                    if (eleRef) {
-                        eleRef.innerHTML = item;
-                    }
+                    let splittedArr = idea.split('<>')
+                    splittedArr.forEach((item, j) => {
+                        if(j === 0) {
+                            eleRef.textContent = item;
+                        } else if(eleRef && item !== '') {
+                            let span = document.createElement('span');
+                            span.style.cssText = `color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;`;
+                            span.innerText = `<>${item}`;
+                            eleRef.appendChild(span);
+                        }
+                    })
                 })
             }
         }, 5);
@@ -77,8 +73,8 @@ export class EditorComponent implements OnInit, OnDestroy {
         return this.CurrentIdeas.get('items') as FormArray
     }
 
-    getAllIdeas(): string[] {
-        return [...new Set([...this.items.value].filter((idea) => idea !== '' && idea !== '<>'))]
+    getAllIdeas(idx?: number): string[] {
+        return [...new Set([...this.items.value].filter((idea, i) => idea !== '' && idea !== '<>' && idx !== i))]
     }
 
     moveCursorToEnd(idx: number) {
@@ -141,16 +137,18 @@ export class EditorComponent implements OnInit, OnDestroy {
     addAnotherIdeaAsRef(idx: number, selectedIdea: string) {
         let controlValue = this.items.at(idx).value;
         if (controlValue && controlValue !== selectedIdea && controlValue !== '<>') {
-            let modifiedValue = ``;
             let convertSelectedIdea = [...selectedIdea.split('<>')]
             let convertControlValue = [...controlValue.split('<>')]
             convertSelectedIdea = convertSelectedIdea.filter((idea) => !convertControlValue.includes(idea));
-            convertSelectedIdea.forEach((idea) => {
-                modifiedValue += `<span style="color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;"><>${idea}</span>`
-            })
             let contentEditableDiv = this.textareaRef(idx);
             contentEditableDiv.innerHTML = this.removeLastMatchingSubstring(contentEditableDiv.innerHTML, '&lt;&gt;')
-            contentEditableDiv.innerHTML += modifiedValue;
+            convertSelectedIdea.forEach((idea) => {
+                let span = document.createElement('span');
+                span.style.cssText = `color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;`;
+                span.innerText = `<>${idea}`;
+                contentEditableDiv.appendChild(span)
+            })
+    
             selectedIdea = convertSelectedIdea.join("<>");
             this.updateControlValue(controlValue + '<>' + selectedIdea, idx);
             this.moveCursorToEnd(idx)
@@ -295,7 +293,7 @@ export class EditorComponent implements OnInit, OnDestroy {
             }
         }
 
-
+        this.updateControlValue(this.replacedAllValue(contentEditableDiv.textContent), idx);
         this.saveData()
     }
 
@@ -326,14 +324,13 @@ export class EditorComponent implements OnInit, OnDestroy {
             range.deleteContents();
             range.collapse(false);
             this.isSelected = false;
-            this.updateControlValue(this.replacedAllValue(contentEditableDiv.textContent), idx);
         } else {
             //selecting editor all span element 
             const range = document.createRange();
             const spanElements = contentEditableDiv.querySelectorAll('span');
             if (spanElements.length > 0) {
-                range.setStartBefore(spanElements[0]);
                 range.setEndAfter(spanElements[spanElements.length - 1]);
+                range.setStartBefore(spanElements[0]);
                 selection = window.getSelection();
                 if (!selection) return;
                 selection.removeAllRanges();
