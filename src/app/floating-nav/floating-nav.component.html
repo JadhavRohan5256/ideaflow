@@ -1,0 +1,32 @@
+<div class="wrapper">
+  <div class="folder" (click)="toggle()">
+      <div class="folder-wrapper">
+          <img src="../../assets/folder.png" alt="folder">
+          <div class="arrow"  [ngClass]="{'open': isOpen}">
+              <p></p>
+              <p></p>
+          </div>
+      </div>
+      <ul class="folder-content" [ngClass]="{'open-content': isOpen}">
+          <li>Item 1</li>
+          <li>Item 2</li>
+      </ul>
+  </div>
+  <img src="../../assets/pin.png" class="pin" alt="pin">
+  <span class="fa-solid fa-arrow-down download"></span>
+  <div class="resize">
+      <span class="fa-solid fa-arrow-down"></span>
+      <span class="fa-solid fa-arrow-down"></span>
+  </div>
+  <div class="more-wrapper" (click)="toggleMore()">
+    <div class="more" >
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <ul class="more-content" [ngClass]="{'more-open': moreOpen} ">
+        <li>item 1</li>
+        <li>item 2</li>
+    </ul>
+  </div>
+</div>
