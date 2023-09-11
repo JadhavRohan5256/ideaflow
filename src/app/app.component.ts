@@ -62,7 +62,7 @@ export class AppComponent implements OnInit {
     document.documentElement.style.setProperty('--bg-color', '#121212');
     document.documentElement.style.setProperty('--text-color', '#ECEFF1');
     document.documentElement.style.setProperty('--bg-surface-color', '#212121');
-    document.documentElement.style.setProperty('--shadow-color', 'rgb(0, 0, 0, 0.3)');
+    document.documentElement.style.setProperty('--shadow-color', 'transparent');
     document.documentElement.style.setProperty('--hover-color', 'rgba(255, 255, 255, 0.3)');
   }
 
