@@ -1,8 +1,4 @@
-<div class="wrapper" 
-    [ngStyle]="position"
-    (drag)="dragOver($event)"
-    (dragend)="dragOver($event)"
-    >
+<div class="wrapper" cdkDrag>
   <div class="folder" (click)="toggle()">
       <div class="folder-wrapper">
           <img src="../../assets/folder.png" alt="folder">

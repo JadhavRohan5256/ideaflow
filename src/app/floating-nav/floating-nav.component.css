@@ -11,12 +11,16 @@
     box-shadow: 0 3px 10px var(--shadow-color);
     color: var(--text-color);
     position: fixed;
+    top: 20px;
+    left: calc(((100vw - 1000px) / 2 ) + 0.5rem);
+    cursor: grab;
 }
 
 
 .wrapper img {
     width: 25px;
     user-select: none;
+    -webkit-user-drag: none;
 }
 
 
@@ -42,7 +46,7 @@
     border-radius: 10px;
     transform: rotate(90deg);
     cursor: pointer;
-    transition: transform 0.5s ease-in-out;
+    transition: transform 1s ease-in-out;
 }
 
 .folder-content {
@@ -214,7 +218,7 @@
 
 .open {
     transform: rotate(-90deg);
-    transition: transform 0.5s  ease-in-out;
+    transition: transform 1s  ease-in-out;
 }
 
 
@@ -240,7 +244,7 @@
     }
 }
 @media only screen and (max-width: 1000px) {
-    .floating-box-wrapper {
-        right: calc(5% + 4px);
+    .wrapper {
+        left: calc(10% / 2 + 0.5rem);
     }
 }

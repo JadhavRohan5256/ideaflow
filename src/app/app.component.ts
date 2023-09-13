@@ -1,15 +1,5 @@
 import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
-import {
-  faArrowLeft, 
-  faMoon, 
-  faSun,
-  faMagnifyingGlass,
-  faPenToSquare,
-  faMicrophone,
-  IconDefinition
-} from '@fortawesome/free-solid-svg-icons'
 import { AppService } from './app.service';
-import { Icon } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
   selector: 'app-root',
@@ -18,15 +8,7 @@ import { Icon } from '@fortawesome/fontawesome-svg-core';
 })
 export class AppComponent implements OnInit {
   title = 'ideaflow-app';
-
-  // Font Awesome Icons
-  faArrowLeft = faArrowLeft;
-  faMagnifyingGlass = faMagnifyingGlass;
-  faPenToSquare = faPenToSquare;
-  faMicrophone = faMicrophone;
   isDark: boolean = true;
-  faSun = faSun;
-  faMoon = faMoon;
 
   constructor(private appService: AppService, private renderer: Renderer2, private eleRef: ElementRef) {}
 

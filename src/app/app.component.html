@@ -1,18 +1,18 @@
 <div class="header-wrapper">
   <div class="nav container">
     <div class="nav-left">
-      <fa-icon class="icons" *ngIf="!isDark" [icon]="faMoon" (click)="changeMode()"></fa-icon>
-      <fa-icon class="icons" *ngIf="isDark" [icon]="faSun" (click)="changeMode()"></fa-icon>
-      <fa-icon class="icons" [icon]="faArrowLeft"></fa-icon>
+      <i class="fas fa-moon icons" *ngIf="!isDark"  (click)="changeMode()"></i>
+      <i class="fas fa-sun icons" *ngIf="isDark" (click)="changeMode()"></i>
+      <i class="fas fa-arrow-left icons"></i>
     </div>
     <div class="nav-middle">
       <div class="search-wrapper">
-        <fa-icon class="icons" [icon]="faMagnifyingGlass"></fa-icon>
+        <i class="fas fa-search icons"></i>
         <input type="text" name="search" id="search" class="search" placeholder="jadhavrohan5050@gmail.com" autocomplete="off" value="jadhavrohan5050@gmail.com">
       </div>
     </div>
     <div class="nav-right">
-      <fa-icon class="icons" [icon]="faPenToSquare" (click)="onClickAdd()"></fa-icon>
+      <i class="fas fa-edit icons" (click)="onClickAdd()"></i>
     </div>
   </div>
 </div>
