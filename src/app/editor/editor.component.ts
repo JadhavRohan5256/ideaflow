@@ -141,16 +141,18 @@ export class EditorComponent implements OnInit, OnDestroy {
             convertSelectedIdea = convertSelectedIdea.filter((idea) => !convertControlValue.includes(idea));
             let contentEditableDiv = this.textareaRef(idx);
             contentEditableDiv.innerHTML = this.removeLastMatchingSubstring(contentEditableDiv.innerHTML, '&lt;&gt;')
-            convertSelectedIdea.forEach((idea) => {
-                let span = document.createElement('span');
-                span.style.cssText = `color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;`;
-                span.innerText = `<>${idea}`;
-                contentEditableDiv.appendChild(span)
-            })
-    
-            selectedIdea = convertSelectedIdea.join("<>");
-            this.updateControlValue(controlValue + '<>' + selectedIdea, idx);
-            this.moveCursorToEnd(idx)
+            if(convertSelectedIdea.length >= 1)  {
+                convertSelectedIdea.forEach((idea) => {
+                    let span = document.createElement('span');
+                    span.style.cssText = `color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;`;
+                    span.innerText = `<>${idea}`;
+                    contentEditableDiv.appendChild(span)
+                })
+                
+                selectedIdea = convertSelectedIdea.join("<>");
+                this.updateControlValue(controlValue + '<>' + selectedIdea, idx);
+                this.moveCursorToEnd(idx)
+            }
         }
         this.ideaMenuOpen = {
             flag: false,
