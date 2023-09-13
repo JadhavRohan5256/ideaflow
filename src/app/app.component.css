@@ -49,12 +49,12 @@
 
 .search-wrapper {
     background-color: var(--bg-surface-color);
-    border-radius: 3px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0.1rem 1rem;
-    gap: 0.5rem;
+    padding: 2px 1rem;
+    gap: 1rem;
     box-shadow: 0 3px 10px var(--shadow-color);
 }
 
@@ -84,8 +84,8 @@
 
 .nav-right .icons:first-of-type {
     background-color: var(--primary-color);
-    padding:0.3rem 0.6rem;
-    border-radius: 3px;
+    padding: 5px 10px;
+    border-radius: 5px;
     color: #212121;
 }
 
