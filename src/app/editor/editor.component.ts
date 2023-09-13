@@ -272,10 +272,12 @@ export class EditorComponent implements OnInit, OnDestroy {
 
         if (lastSpan) {
             this.selectContent(idx);
+            this.updateControlValue(this.replacedAllValue(contentEditableDiv.textContent), idx);
         }
         else {
             if (contentEditableDiv.textContent !== '' && contentEditableDiv.textContent !== null) {
                 contentEditableDiv.textContent = contentEditableDiv.textContent?.slice(0, -1);
+                this.updateControlValue(this.replacedAllValue(contentEditableDiv.textContent), idx);
                 this.moveCursorToEnd(idx)
             }
             else {
@@ -294,7 +296,6 @@ export class EditorComponent implements OnInit, OnDestroy {
             }
         }
 
-        this.updateControlValue(this.replacedAllValue(contentEditableDiv.textContent), idx);
         this.saveData()
     }
 
