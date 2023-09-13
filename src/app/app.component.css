@@ -49,7 +49,7 @@
 
 .search-wrapper {
     background-color: var(--bg-surface-color);
-    border-radius: 10px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     width: 100%;
