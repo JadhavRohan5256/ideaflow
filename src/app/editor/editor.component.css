@@ -3,33 +3,36 @@
     position: relative;
     z-index: 1000;
     cursor: grab;
-    margin: 20px 0;
+    padding: 20px 0;
 }
 
 
 .content-wrapper {
-    position: relative;
-    overflow-y: auto;
-    height: calc(100vh - 51.2px);
-    padding: 0.5rem;
-}
-
-.content-wrapper::-webkit-scrollbar {
-    width: 4px;
-}
-
-.content-wrapper::-webkit-scrollbar-thumb {
-    background-color: var(--primary-color);
-    border-radius: 4px;
-}
-
-.content-wrapper::-webkit-scrollbar-track {
-    border-radius: 4px;
-    overflow: hidden;
+    margin-top: -59.2px;
 }
 
 .idea-wrapper {
-    padding: 1rem 0;
+    position: relative;
+    overflow-y: scroll;
+    border-radius: 10px;
+    height: calc(100vh - 79px - 51.2px);
+}
+
+.idea-wrapper::-webkit-scrollbar {
+    width: 3px;
+}
+
+.idea-wrapper::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 10px;
+}
+
+
+.ideas {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 3px;
 }
 
 .content-date {
@@ -38,6 +41,7 @@
     top: 0;
     right:0;
     z-index: 400;
+    padding: 20px 0;
 }
 
 .ideas {
@@ -53,8 +57,7 @@
     align-items: center;
     position: relative;
     box-shadow: 0 3px 10px var(--shadow-color);
-    margin: 0.5rem 0;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .placeholder {
@@ -157,43 +160,34 @@
     position: absolute;
     background-color: var(--bg-color);
     box-shadow: 0px 0px 1px var(--text-color);
-    border-radius: 5px;
+    border-radius: 10px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
     z-index: 440;
+    max-width: 300px;
 }
 
 
-.previous-ideas-wrapper span {
+.previous-ideas-wrapper .title {
     font-weight: 400;
-    box-shadow: 0 1.5px 1px -1px gray; 
-    padding: 0.5rem 1rem;
+    padding: 5px 10px;
     background-color: var(--bg-surface-color);
-    display: block;
+    border-bottom: 0.8px solid var(--hover-color);
 }
 
 .previous-ideas {
     max-height: 200px;
-    overflow-y: auto;
+    overflow-y: scroll;
     background-color: var(--bg-surface-color);
-    padding-bottom: 1rem;
 }
 
 .previous-ideas::-webkit-scrollbar {
-    width: 7px;
-}
-
-.previous-ideas::-webkit-scrollbar-thumb {
-    background-color: var(--primary-color);
-    border-radius: 7px;
-}
-
-.previous-ideas::-webkit-scrollbar-track {
-    border-radius: 7px;
     display: none;
 }
 
 .previous-ideas p {
-    padding: 0.5rem 1rem;
+    padding: 5px 10px;
     font-size: 16px;
     font-weight: 300;
     display: flex;

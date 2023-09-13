@@ -3,16 +3,16 @@
     z-index: 1500;
     width: 218px !important;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
-    padding: 0.2rem 1rem;
+    padding: 5px 10px;
     width: 100%;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 0 3px 10px var(--shadow-color);
     color: var(--text-color);
-    position: fixed;
+    position: sticky;
     top: 20px;
-    left: calc(((100vw - 1000px) / 2 ) + 0.5rem);
+    left: 100%;
     cursor: grab;
 }
 
@@ -52,12 +52,12 @@
 .folder-content {
     position: absolute;
     top: 2.5rem;
-    left: -1rem;
+    left: -10px;
     background-color: var(--bg-surface-color);
     box-shadow: 0 3px 10px var(--shadow-color);
     z-index: 500;
     width: 100px;
-    border-radius: 5px;
+    border-radius: 10px;
     font-family: var(--poppin);
     font-weight: 200;
     font-size: 0.9rem;
@@ -78,7 +78,7 @@
 
 .folder-content li {
     list-style: none;
-    padding: 0.2rem 0.5rem;
+    padding: 5px 10px;
 }
 
 .folder li:hover {
@@ -162,12 +162,12 @@
 .more-content {
     position: absolute;
     top: 2.5rem;
-    right: -1rem;
+    right: -10px;
     background-color: var(--bg-surface-color);
     box-shadow: 0 3px 10px var(--shadow-color);
     z-index: 500;
     width: 100px;
-    border-radius: 5px;
+    border-radius: 10px;
     font-family: var(--poppin);
     font-weight: 200;
     font-size: 0.9rem;
@@ -188,7 +188,7 @@
 
 .more-content li {
     list-style: none;
-    padding: 0.2rem 0.5rem;
+    padding: 5px 10px;
 }
 
 .more-content li:hover {
@@ -241,10 +241,5 @@
 
     100% {
         transform: translateY(-10px);
-    }
-}
-@media only screen and (max-width: 1000px) {
-    .wrapper {
-        left: calc(10% / 2 + 0.5rem);
     }
 }

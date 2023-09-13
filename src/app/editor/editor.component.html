@@ -40,7 +40,7 @@
                     class="previous-ideas-wrapper"
                     *ngIf="ideaMenuOpen.flag && ((items.value.length - 1) - idx) === ideaMenuOpen.control &&  ideaMenuOpen.length > 1" 
                     [ngStyle]="boxPosition">
-                    <span>Select Ideas</span>
+                    <span class="title">Select Ideas</span>
                     <div class="previous-ideas">
                         <p 
                             *ngFor="let idea of getAllIdeas(((items.value.length - 1) - idx)); let i = index;" 
