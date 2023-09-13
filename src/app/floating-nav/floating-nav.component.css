@@ -59,7 +59,7 @@
     font-size: 0.9rem;
     overflow: hidden;
     color: var(--text-color);
-    transform: translateX(-100%);
+    transform: translateX(-100vw);
     opacity: 0;
     transition: transform 1s ease-in-out,
                 opacity 1s ease-in-out;
@@ -169,7 +169,7 @@
     font-size: 0.9rem;
     overflow: hidden;
     color: var(--text-color);
-    transform: translateX(100%);
+    transform: translateX(100vw);
     opacity: 0;
     transition: transform 1s ease-in-out,
                 opacity 1s ease-in-out;
