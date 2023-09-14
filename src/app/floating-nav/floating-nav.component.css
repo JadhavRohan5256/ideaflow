@@ -1,7 +1,7 @@
 .wrapper {
     background-color: var(--bg-surface-color);
     z-index: 1500;
-    width: 218px;
+    width: 218px !important;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -250,7 +250,7 @@
     }
 
     .wrapper {
-        width: 180px;
+        width: 180px !important;
     }
 
     .folder img {
