@@ -131,3 +131,35 @@
 @media only screen and (max-width: 1050px) {
 
 }
+
+
+@media only screen and (max-width: 500px) {
+    .icons {
+        font-size: 1rem;
+    }
+
+    .search-wrapper {
+        gap: 0.5rem;
+    }
+
+    .search-wrapper input{
+        font-size: 1rem;
+        padding-left: 0;
+    }
+
+    .nav {
+        gap: 0.5rem;
+    }
+
+    .nav-left {
+        width: 45px;
+    }
+
+    .nav-right {
+        width: 50px;
+    }
+
+    .nav-middle {
+        width: calc(100% - 95px - 1rem);
+    }
+}

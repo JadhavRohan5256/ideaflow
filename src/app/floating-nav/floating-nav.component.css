@@ -57,7 +57,7 @@
     box-shadow: 0 3px 10px var(--shadow-color);
     z-index: 500;
     width: 100px;
-    border-radius: 10px;
+    border-radius: 7px;
     font-family: var(--poppin);
     font-weight: 200;
     font-size: 0.9rem;
@@ -167,7 +167,7 @@
     box-shadow: 0 3px 10px var(--shadow-color);
     z-index: 500;
     width: 100px;
-    border-radius: 10px;
+    border-radius: 7px;
     font-family: var(--poppin);
     font-weight: 200;
     font-size: 0.9rem;
@@ -241,5 +241,19 @@
 
     100% {
         transform: translateY(-10px);
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .icons {
+        font-size: 1rem;
+    }
+
+    .wrapper {
+        width: 180px !important;
+    }
+
+    .folder img {
+        width: 20px;
     }
 }
