@@ -1,13 +1,15 @@
-<div class="container">
+<!-- <div class="container">
     <div 
         class="floating-wrapper"
         >
-        <app-floating-nav></app-floating-nav>
     </div>
-</div>
+</div> -->
 
 <div class="container content-wrapper" >
-    <p class="content-date">Today</p>
+    <div class="title-wrapper">
+        <p class="content-date">Today</p>
+        <app-floating-nav></app-floating-nav>
+    </div>
     <div class="idea-wrapper" id="two" [formGroup]="CurrentIdeas">
         <div class="ideas" formArrayName="items">
             <div 
