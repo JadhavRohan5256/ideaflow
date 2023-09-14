@@ -134,6 +134,10 @@
     background-color: var(--bg-surface-color);
 }
 
+.editor-wrapper:last-of-type {
+    margin-bottom: 10px;
+}
+
 .editor-wrapper .textarea {
     background-color: transparent;
     outline: none;
@@ -229,5 +233,12 @@
 @media only screen and (max-width: 500px) {
     .placeholder {
         font-size: 0.8rem;
+    }
+
+    .editor-wrapper .textarea {
+        font-size: 0.8rem;
+    }
+    .content-date {
+        font-size: 1rem;
     }
 }
