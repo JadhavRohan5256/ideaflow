@@ -10,25 +10,26 @@
         <p class="content-date">Today</p>
         <app-floating-nav></app-floating-nav>
     </div>
-    <div class="idea-wrapper" id="two" [formGroup]="CurrentIdeas">
-        <div class="ideas" formArrayName="items">
+    <div class="idea-wrapper" id="two">
+        <div class="ideas">
             <div 
             class="editor-wrapper" 
-            *ngFor="let div of items.controls.slice().reverse(); let idx = index;">
+            *ngFor="let div of all_reference.slice().reverse(); let idx = index;">
                 <div 
                     contenteditable="true" 
-                    [id]="'editable_' + ((items.value.length - 1) - idx)" 
-                    (input)="changeDetection($event, ((items.value.length - 1) - idx))"
+                    [id]="'editable_' + ((all_reference.length - 1) - idx)" 
+                    (input)="changeDetection($event, ((all_reference.length - 1) - idx))"
                     class="textarea"
-                    (keydown)="onAnyKeyPress(((items.value.length - 1) - idx), $event)"
+                    (keydown)="onAnyKeyPress(((all_reference.length - 1) - idx), $event)"
                     >
                 </div>
-                <div class="placeholder" *ngIf="showPlaceholder(((items.value.length - 1) - idx))">
+                <div class="placeholder" *ngIf="showPlaceholder(((all_reference.length - 1) - idx))">
                     <p>Press Alt + ArrowDown, ArrowUp to add one more editor.</p>
                     <p>Press Ctrl + Space to open ideas dialog box.</p>
-                    <p>For Deletion Press Delete Btn or Backspace.</p>
+                    <p>For Deletion Press Backspace.</p>
                 </div>
-                <div class="editor-warpper-right" (click)="onClickIcons(((items.value.length - 1) - idx))">
+
+                <div class="editor-warpper-right" (click)="onClickIcons(((all_reference.length - 1) - idx))">
                     <!-- <p class="time">2:60 Am</p> -->
                     <div class="close-wrapper">
                         <div class="close-icon">
@@ -37,16 +38,26 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="refereces" *ngIf="all_reference[((all_reference.length - 1) - idx)].all_ref.length > 0">
+                    <div [ngClass]="this.isOpenRef[((all_reference.length - 1) - idx)]? 'top-layer animate' : 'top-layer'" (click)="openDetails(((all_reference.length - 1) - idx))">
+                        <i class="fa-solid fa-caret-right icons"></i>
+                        <span>{{all_reference[((all_reference.length - 1) - idx)].all_ref.length}} reference</span>
+                    </div>
+                    <div class="all-ref" *ngIf="isOpenRef[((all_reference.length - 1) - idx)]">
+                        <p *ngFor="let idea of all_reference[((all_reference.length - 1) - idx)].all_ref;">{{idea}}</p>
+                    </div>
+                </div>
                 <!-- all ideas dialog box -->
                 <div 
                     class="previous-ideas-wrapper"
-                    *ngIf="ideaMenuOpen.flag && ((items.value.length - 1) - idx) === ideaMenuOpen.control &&  ideaMenuOpen.length > 1" 
+                    *ngIf="ideaMenuOpen.flag && ((all_reference.length - 1) - idx) === ideaMenuOpen.control" 
                     [ngStyle]="boxPosition">
                     <span class="title">Select Ideas</span>
                     <div class="previous-ideas">
                         <p 
-                            *ngFor="let idea of getAllIdeas(((items.value.length - 1) - idx)); let i = index;" 
-                            (click)="addAnotherIdeaAsRef(((items.value.length - 1) - idx), idea)">
+                            *ngFor="let idea of getAllIdeas(((all_reference.length - 1) - idx)); let i = index;" 
+                            (click)="addAnotherIdeaAsRef(((all_reference.length - 1) - idx), idea)">
                             <span>{{idea}}</span>
                         </p>
                     </div>

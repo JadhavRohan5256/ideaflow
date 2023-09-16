@@ -10,60 +10,42 @@ import { faArrowRightLong } from '@fortawesome/free-solid-svg-icons'
 })
 export class EditorComponent implements OnInit, OnDestroy {
     faArrowRightLong = faArrowRightLong;
-
+    all_reference: {'idea_name': string, 'all_ref': string[], 'idea_HTML': string}[]= [];
     boxPosition: { 'left': string, 'top': string } = {
         left: '0px',
         top: '0px'
     }
 
+    isOpenRef: boolean[] = [];
+
     CurrentIdeas!: FormGroup;
-    ideaMenuOpen: { 'flag': boolean, 'control'?: number, 'length': number } = {
+    ideaMenuOpen: { 'flag': boolean, 'control'?: number} = {
         'flag': false,
-        'length': 0
     }
     allIdeas: string[] = []
 
     constructor(
-        private appService: AppService,
-        private formBuilder: FormBuilder,
-        private elementRef: ElementRef
+        private appService: AppService
     ) {
 
     }
 
     ngOnInit(): void {
-        let allIdeas!: string[];
-        allIdeas = this.appService.getIdeas().filter((idea) => idea !== "");
-        if (allIdeas.length === 0) {
-            allIdeas.push('')
-        }
 
-        this.CurrentIdeas = new FormGroup({
-            'items': this.formBuilder.array(allIdeas)
-        });
+        this.all_reference = this.appService.getIdeas();
 
         setTimeout(() => {
-            if (allIdeas.length > 0) {
-                allIdeas.forEach((idea, i) => {
-                    let eleRef = this.textareaRef(i)
-                    let splittedArr = idea.split('<>')
-                    splittedArr.forEach((item, j) => {
-                        if(j === 0) {
-                            eleRef.textContent = item;
-                        } else if(eleRef && item !== '') {
-                            let span = document.createElement('span');
-                            span.style.cssText = `color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;`;
-                            span.innerText = `<>${item}`;
-                            eleRef.appendChild(span);
-                        }
-                    })
-                })
-            }
+            this.all_reference.forEach((obj, i) => {
+                let contentEditableDiv = this.textareaRef(i);
+                contentEditableDiv.innerHTML = obj.idea_HTML;
+                this.isOpenRef.push(false)
+            })
         }, 5);
 
         this.appService.newIdea.subscribe((value) => {
             if (value) {
-                this.items.push(new FormControl(''))
+                this.all_reference.push({'idea_name': '', 'all_ref': [], 'idea_HTML': ''});
+                this.isOpenRef.push(false)
             }
         })
     }
@@ -72,8 +54,24 @@ export class EditorComponent implements OnInit, OnDestroy {
         return this.CurrentIdeas.get('items') as FormArray
     }
 
-    getAllIdeas(idx?: number): string[] {
-        return [...new Set([...this.items.value].filter((idea, i) => idea !== '' && idea !== '<>' && idx !== i))]
+    getAllIdeas(idx: number): string[] {
+        let key = this.searchRef(idx);
+        
+        let values: string[] = [];
+        this.all_reference.forEach((obj, i) => {
+            if(obj.idea_name !== '' && idx !== i) {
+                values.push(this.replacedAllValue(obj.idea_name));
+            }
+        })
+
+        return values.filter((st) =>  {
+            if(key !== '') {
+                return st.toLocaleLowerCase().startsWith(key.toLocaleLowerCase());
+            }
+
+            return st;
+        })
+        
     }
 
     moveCursorToEnd(idx: number) {
@@ -94,71 +92,82 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     changeDetection(event: any, idx: number) {
-        let contentValueHtml = (event.target as HTMLDivElement).innerHTML;
-        if (contentValueHtml.length === 1) {
-            (event.target as HTMLDivElement).innerHTML = contentValueHtml[0].toUpperCase() + contentValueHtml.slice(1);
+        let contentValue = (event.target as HTMLDivElement).textContent;
+        if (contentValue && contentValue.length === 1) {
+            (event.target as HTMLDivElement).textContent = contentValue[0].toUpperCase() + contentValue.slice(1);
             this.moveCursorToEnd(idx);
         }
-
-        let contentValue = (event.target as HTMLDivElement).textContent;
         contentValue = this.replacedAllValue(contentValue);
-        this.updateControlValue(contentValue, idx, event)
-        if (contentValue.endsWith('<>')) {
+        let regex = /<> *[^ ]*( | ){0,2}$/;
+        if(regex.test(contentValue)) {
             this.ideaMenuOpen = {
                 flag: true,
-                control: idx,
-                length: this.getAllIdeas().length
+                control: idx
             }
+
         }
-        else {
-            this.ideaMenuOpen = {
-                flag: false,
-                length: this.getAllIdeas().length
-            }
-        }
+
+        let htmlContent = this.textareaRef(idx).innerHTML;
+        this.updateControlValue(contentValue, htmlContent, idx, event)
+        this.saveData();
 
     }
 
-    updateControlValue(contentValue: string, idx: number, event?: any): void {
-        if (event) {
+    updateControlValue(contentValue: string, htmlContent: string,idx: number, event?: any): void {
+        this.all_reference[idx].idea_name = contentValue;
+        this.all_reference[idx].idea_HTML = htmlContent;
+        if(event) {
             this.boxPosition = this.getCursorPos(event, idx);
         }
-
-        if (contentValue.endsWith('<>') && contentValue !== '<>') {
-            contentValue = contentValue.slice(0, -2);
-        }
-
-        contentValue = [...new Set(contentValue.split('<>'))].join('<>')
-        this.items.controls[idx].setValue(contentValue)
-        this.saveData();
     }
 
     addAnotherIdeaAsRef(idx: number, selectedIdea: string) {
-        let controlValue = this.items.at(idx).value;
+        let controlValue = this.all_reference[idx].idea_name;
         if (controlValue && controlValue !== selectedIdea && controlValue !== '<>') {
-            let convertSelectedIdea = [...selectedIdea.split('<>')]
-            let convertControlValue = [...controlValue.split('<>')]
-            convertSelectedIdea = convertSelectedIdea.filter((idea) => !convertControlValue.includes(idea));
+            let p1 = document.createElement('p');
+            p1.style.cssText = `display: inline;`;
+            p1.innerHTML = '&nbsp;';
+            let p2 = document.createElement('p');
+            p2.style.cssText = `display: inline;`;
+            p2.innerHTML = '&nbsp;';
+
             let contentEditableDiv = this.textareaRef(idx);
-            contentEditableDiv.innerHTML = this.removeLastMatchingSubstring(contentEditableDiv.innerHTML, '&lt;&gt;')
-            if(convertSelectedIdea.length >= 1)  {
-                convertSelectedIdea.forEach((idea) => {
-                    let span = document.createElement('span');
-                    span.style.cssText = `color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif;`;
-                    span.innerText = `<>${idea}`;
-                    contentEditableDiv.appendChild(span)
-                })
-                
-                selectedIdea = convertSelectedIdea.join("<>");
-                this.updateControlValue(controlValue + '<>' + selectedIdea, idx);
-                this.moveCursorToEnd(idx)
+            if (contentEditableDiv.lastChild?.nodeName === 'SPAN') {
+                contentEditableDiv.removeChild(contentEditableDiv.lastChild);
             }
+            let span = document.createElement('span');
+            span.style.cssText = `color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif; background-color: #0187862b; border-radius: 5px;`;
+            span.innerText = ` ${selectedIdea} `;
+            span.setAttribute('data', 'ref')
+            contentEditableDiv.appendChild(p1);
+            contentEditableDiv.appendChild(span)
+            contentEditableDiv.appendChild(p2);
+            
+            let contentEditableDiv_current = this.textareaRef(idx);
+            controlValue = this.replacedAllValue(contentEditableDiv_current.textContent);
+            this.updateControlValue(controlValue, contentEditableDiv.innerHTML,idx);
+            let splittedControl = controlValue.split('<>');
+            let splitted = selectedIdea.split('<>')
+            splitted = splitted.map((idea) => idea.trim())
+            splitted.forEach((ide) => {
+                this.all_reference.forEach((obj) => {
+                    if(obj.idea_name.startsWith(ide)) {
+                        obj.all_ref.forEach((inside, j) => {
+                            obj.all_ref = obj.all_ref.filter((fi) => !fi.startsWith(splittedControl[0].trim()))
+                        })
+
+                        obj.all_ref.push(controlValue)
+                    }
+                })
+            })
+            this.moveCursorToEnd(idx)
         }
         this.ideaMenuOpen = {
             flag: false,
-            control: idx,
-            length: this.getAllIdeas().length
+            control: idx
         }
+
+        this.saveData();
     }
 
     private replacedAllValue(rawValue: string | null): string {
@@ -175,7 +184,7 @@ export class EditorComponent implements OnInit, OnDestroy {
             selectionStart = selection.focusOffset
 
         }
-        const textBeforeCaret = this.items.value[idx];
+        const textBeforeCaret = this.all_reference[idx].idea_name;
         const span = document.createElement('span');
         span.style.visibility = 'hidden';
         span.style.position = 'absolute';
@@ -192,38 +201,36 @@ export class EditorComponent implements OnInit, OnDestroy {
         }
     }
 
-    
+
     clickedOutside(): void {
         this.ideaMenuOpen = {
-            flag: false,
-            length: this.getAllIdeas().length
+            flag: false
         }
     }
 
     private duplicateControl(idx: number, key: string): void {
         const duplicatedControl = new FormControl('');
         if (key === 'ArrowDown') {
-            this.items.insert(idx, duplicatedControl);
+            this.all_reference.splice(idx, 0, {'idea_name': '', 'all_ref': [], 'idea_HTML': ''})
             setTimeout(() => {
                 this.moveCursorToEnd(idx)
             }, 10);
         }
         else if (key === 'ArrowUp') {
-            this.items.insert(idx + 1, duplicatedControl);
+            this.all_reference.splice(idx + 1, 0, {'idea_name': '', 'all_ref': [], 'idea_HTML': ''});
             setTimeout(() => {
                 this.moveCursorToEnd(idx + 1)
             }, 10);
         }
 
         this.ideaMenuOpen = {
-            'flag': false,
-            'length': this.allIdeas.length
+            'flag': false
         }
         this.saveData()
     }
 
-    
-    
+
+
     showPlaceholder(idx: number): boolean {
         let eleRef = this.textareaRef(idx)
         if (!eleRef.textContent && eleRef.textContent === '') {
@@ -239,11 +246,28 @@ export class EditorComponent implements OnInit, OnDestroy {
 
     onAnyKeyPress(idx: number, event: KeyboardEvent) {
         if (event.key === 'Delete' || event.key === 'Backspace') {
-            event.preventDefault();
-            this.deleteIdeas(idx)
-            this.ideaMenuOpen = {
-                'flag': false,
-                'length': this.allIdeas.length
+            this.deleteIdeas(event, idx)
+             this.ideaMenuOpen = {
+                'flag': false
+            }
+        }
+        else {
+            let contentValue = (event.target as HTMLDivElement).textContent;
+            if(contentValue === null) return;
+            let regex = /<> *[^ ]*( | ){0,2}$/;
+            if (regex.test(contentValue)) {
+                let contentEditableDiv = this.textareaRef(idx);
+                if (contentEditableDiv.lastChild?.nodeName !== 'SPAN') {
+                    let span = document.createElement('span');
+                    span.style.cssText = `color: #018786; font-weight: 500; font-style: italic; font-family: 'Poppins', sans-serif; background-color: #0187862b; border-radius: 5px;`;
+                    span.innerHTML = `&nbsp;`;
+                    contentEditableDiv.appendChild(span);
+                    this.moveCursorToEnd(idx);
+                }
+                this.ideaMenuOpen = {
+                    flag: true,
+                    control: idx,
+                }
             }
         }
 
@@ -258,41 +282,34 @@ export class EditorComponent implements OnInit, OnDestroy {
             if (!contentValue.endsWith('<>')) return;
             this.ideaMenuOpen = {
                 flag: true,
-                control: idx,
-                length: this.getAllIdeas().length
+                control: idx
             }
         }
 
 
     }
 
-    private deleteIdeas(idx: number) {
+    private deleteIdeas(event: KeyboardEvent, idx: number) {
         let contentEditableDiv = this.textareaRef(idx);
-        let lastSpan = contentEditableDiv.querySelector('span:last-of-type')
-
-        if (lastSpan) {
+        if (contentEditableDiv.lastChild?.nodeName === 'SPAN') {
+            let lastSpan = contentEditableDiv.querySelector('span:last-of-type')
+            if (lastSpan && lastSpan.getAttribute('data') !== 'ref') return;
+            event.preventDefault();
             this.selectContent(idx);
-            this.updateControlValue(this.replacedAllValue(contentEditableDiv.textContent), idx);
+            this.updateControlValue(this.replacedAllValue(contentEditableDiv.textContent), contentEditableDiv.innerHTML, idx);
         }
-        else {
-            if (contentEditableDiv.textContent !== '' && contentEditableDiv.textContent !== null) {
-                contentEditableDiv.textContent = contentEditableDiv.textContent?.slice(0, -1);
-                this.updateControlValue(this.replacedAllValue(contentEditableDiv.textContent), idx);
-                this.moveCursorToEnd(idx)
+        else if (contentEditableDiv.innerHTML === "") {
+            this.all_reference = this.all_reference.slice(idx, -1);
+            if (idx === 0) {
+                setTimeout(() => {
+                    this.moveCursorToEnd(idx)
+                }, 10);
             }
             else {
-                this.items.removeAt(idx);
-                if (idx === 0) {
-                    setTimeout(() => {
-                        this.moveCursorToEnd(idx)
-                    }, 10);
-                }
-                else {
-                    setTimeout(() => {
-                        this.moveCursorToEnd(idx - 1)
-                    }, 10);
+                setTimeout(() => {
+                    this.moveCursorToEnd(idx - 1)
+                }, 10);
 
-                }
             }
         }
 
@@ -300,7 +317,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     }
 
     onClickIcons(idx: number): void {
-        this.items.removeAt(idx);
+        this.all_reference = this.all_reference.filter((obj, i)=> i !== idx);
         if (idx === 0) {
             setTimeout(() => {
                 this.moveCursorToEnd(idx)
@@ -318,7 +335,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     selectContent(idx: number) {
         let selection = window.getSelection();
         const contentEditableDiv = this.textareaRef(idx);
-        if(selection === null) return;
+        if (selection === null) return;
 
         if (selection.anchorOffset !== selection.focusOffset) {
             //deleting editor all span element 
@@ -328,10 +345,10 @@ export class EditorComponent implements OnInit, OnDestroy {
         } else {
             //selecting editor all span element 
             const range = document.createRange();
-            const spanElements = contentEditableDiv.querySelectorAll('span');
-            if (spanElements.length > 0) {
-                range.setEndAfter(spanElements[spanElements.length - 1]);
-                range.setStartBefore(spanElements[0]);
+            const spanElements = contentEditableDiv.querySelector('span:last-of-type');
+            if (spanElements) {
+                range.setEndAfter(spanElements);
+                range.setStartBefore(spanElements);
                 selection = window.getSelection();
                 if (!selection) return;
                 selection.removeAllRanges();
@@ -339,20 +356,20 @@ export class EditorComponent implements OnInit, OnDestroy {
             }
         }
     }
-    
-    private removeLastMatchingSubstring(str: string, ch: string): string {
-        const lastIndex = str.lastIndexOf(ch);
-    
-        if (lastIndex !== -1) {
-            str = str.substring(0, lastIndex) + str.substring(lastIndex + ch.length);
-        }
-        return str;
-    }
 
     private saveData(): void {
-        this.appService.saveIdeas([...this.items.value])
+        this.appService.saveIdeas(this.all_reference)
     }
-    
+
+    searchRef(idx: number): string {
+        let key = this.all_reference[idx].idea_name.trim().split('<>');
+        return key[key.length - 1].trim();
+    }
+
+    openDetails(idx: number) :void {
+        this.isOpenRef[idx] = !this.isOpenRef[idx];
+    }
+
     ngOnDestroy(): void {
         this.saveData();
     }

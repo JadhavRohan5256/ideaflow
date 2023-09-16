@@ -48,9 +48,10 @@
     position: absolute;
     left: 0;
     top: 25%;
-    width: 2px;
+    width: 3px;
     height: 50%;
-    background-color: var(--primary-color);
+    background-color: var(--primary-variant-color);
+    border-radius: 1.5px;
 }
 
 .ideas {
@@ -64,6 +65,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    flex-wrap: wrap;
     position: relative;
     box-shadow: 0 3px 10px var(--shadow-color);
     border-radius: 7px;
@@ -140,7 +142,7 @@
     border: none;
     color: var(--text-color);
     font-size: 1.1rem;
-    width: 100%;
+    flex:0 0 calc(100% - 50px);
     height: 70px;
     font-family: var(--poppin);
     font-weight: 200;
@@ -148,6 +150,7 @@
     padding: 5px 10px;
     z-index: 30;
     overflow-x: hidden;
+
 }
 
 .textarea::-webkit-scrollbar {
@@ -163,6 +166,43 @@
     z-index: 200;
     margin-top: -71.2px;
     overflow: hidden;
+}
+
+
+.refereces {
+    flex: 0 0 calc(100% - 20px);
+    margin: 10px;
+}
+
+.top-layer {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.all-ref {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+}
+
+.all-ref p {
+    padding: 0.5rem 1.2rem;
+    background-color: var(--bg-color);
+    box-shadow: 0px 0px 1px var(--hover-color);
+    border-radius: 7px;
+    position: relative;
+    border-left: 3px solid var(--primary-variant-color);
+}
+
+.top-layer>.icons {
+    transform: none;
+    transition: transform 0.1s ease-in-out;
+}
+
+.animate>.icons{
+    transform: rotate(90deg);
+    transition: transform 0.1s ease-in-out;
 }
 
 .previous-ideas-wrapper {
@@ -225,6 +265,8 @@
     color: var(--primary-color);
 }
 
+
+
 @media only screen and (max-width: 500px) {
     .placeholder {
         font-size: 0.8rem;
@@ -235,5 +277,9 @@
     }
     .content-date {
         font-size: 1rem;
+    }
+
+    .refereces {
+        font-size: 0.8rem;
     }
 }

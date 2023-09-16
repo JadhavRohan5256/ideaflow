@@ -13,13 +13,13 @@ export class AppService {
         }
     }
 
-    saveIdeas(ideas: string[]) {
-        ideas = ideas.filter((item) => item !== "");
-        localStorage.setItem('allIdeas', JSON.stringify(ideas))
+    saveIdeas(ideas: {'idea_name': string, 'all_ref': string[], 'idea_HTML': string}[]) {
+        ideas = ideas.filter((obj) => obj.idea_name !== "");
+        localStorage.setItem('all_notes', JSON.stringify(ideas))
     }
     
-    getIdeas(): string[] {
-        let storage = localStorage.getItem('allIdeas')
+    getIdeas(): {'idea_name': string, 'all_ref': string[], 'idea_HTML': string}[] {
+        let storage = localStorage.getItem('all_notes')
         if(storage) {
             let parseStorage = JSON.parse(storage);
             if(parseStorage) {
@@ -27,6 +27,6 @@ export class AppService {
             }
         }
 
-        return [];
+        return [{idea_name: '', all_ref:[], idea_HTML: ''}];
     }
 }
